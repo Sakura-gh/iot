@@ -1,5 +1,7 @@
 package com.gehao.iotserver.web.controller;
 
+import javax.servlet.http.HttpSession;
+
 import com.gehao.iotserver.biz.bo.Result;
 import com.gehao.iotserver.biz.service.impl.LoginServiceImpl;
 import com.gehao.iotserver.dal.dataobject.UserDO;
@@ -21,7 +23,7 @@ public class LoginController {
     @CrossOrigin
     @PostMapping(value = "/api/login")
     @ResponseBody
-    public Result login(@RequestBody UserDO requestUser) {
-        return loginService.login(requestUser);
+    public Result login(@RequestBody UserDO requestUser, HttpSession session) {
+        return loginService.login(requestUser, session);
     }
 }

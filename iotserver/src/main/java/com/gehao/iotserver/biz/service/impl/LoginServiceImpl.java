@@ -3,6 +3,8 @@ package com.gehao.iotserver.biz.service.impl;
 import java.util.List;
 import java.util.Objects;
 
+import javax.servlet.http.HttpSession;
+
 import com.gehao.iotserver.biz.bo.Result;
 import com.gehao.iotserver.biz.service.LoginService;
 import com.gehao.iotserver.dal.dataobject.UserDO;
@@ -22,20 +24,23 @@ public class LoginServiceImpl implements LoginService {
     private UserMapper userMapper;
 
     @Override
-    public Result login(UserDO requestUser) {
+    public Result login(UserDO requestUser, HttpSession session) {
         String username = requestUser.getUsername();
         username = HtmlUtils.htmlEscape(username);
         String password = requestUser.getPassword();
 
         Boolean isLegal = false;
         List<UserDO> users = userMapper.getByName(username);
+        UserDO _user = null;
         for (UserDO user : users) {
             if (Objects.equals(password, user.getPassword())) {
                 isLegal = true;
+                _user = user;
                 break;
             }
         }
         if (isLegal) {
+            session.setAttribute("user", _user);
             return new Result(200);
         } else {
             return new Result(400);
