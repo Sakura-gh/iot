@@ -30,6 +30,7 @@ public class WorkerThread extends Thread {
             Random rand = new Random();
 
             clientId = clientPrefix + String.format("%04d", deviceId);
+            // mqttServer就是broker，tcp://localhost:1883
             MqttClient mqttClient = new MqttClient(mqttServer, clientId, persistence);
             MqttConnectOptions connOpts = new MqttConnectOptions();
             connOpts.setCleanSession(true);
