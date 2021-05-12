@@ -158,5 +158,195 @@ public class UserDO {
 
 原理介绍：[🔗](https://zhuanlan.zhihu.com/p/353577360)、[🔗](https://www.ctolib.com/gaoyf95-springboot-mqtt.html)、[🔗](https://xie.infoq.cn/article/5663942f0b68e0d42f7eab880)、
 
-和Springboot集成：[连接](https://segmentfault.com/a/1190000017811919)
+和Springboot集成：[🔗](https://blog.csdn.net/qq_41873771/article/details/114965238)、[🔗](https://blog.csdn.net/User_jing/article/details/111678676)、
+
+#### Spring Boot
+
+>   对Spring Boot来说，所有在启动类的下级包里的注解，都会被自动扫描到
+>
+>   当配置完Spring扫描指定包及其子包中的类时，会识别所有标记了@Component、@Controller、@Service、@Repository注解的类，由于@Configuration注解本身也用@Component标注了，Spring将能够识别出@Configuration标注类，并顺便扫描该类下所有@Bean方法
+
+##### 注解
+
+按照对象的来源，注解分为两类：
+
+-   一类是**使用Bean**，就是创建**第三方库的类实例**，通常是@Bean修饰的方法所返回的类对象，其中@Bean修饰的方法一般会在@Configuration修饰的类中
+
+    注：@Bean会要求被修饰的方法必须返回一个类对象，并将该类对象转化为Bean，交给Spring容器管理；值得注意的是，返回的对象可以是自定义的类也可以是第三方库的类，由于我们通常会用注册Bean的方法(见后面)来创建自定义类实例的Bean，因此@Bean也就基本上只用于创建第三方库类实例的Bean了
+
+-   一类是**注册Bean**，就是创建**自定义的类实例**，通常是@Controller , @Service , @Repository , @Component , @Configration这些注解来修饰自定义的类，并会自动生成被修饰的自定义类的实例
+
+简单来说，一种是用别人定义好的类来创建对象，一种是用自定义的类来创建对象，最终实例化的对象都会转化成Bean(默认是单例)，放在IoC容器中，交给Spring管理，这样的对象最终会和@Autowired , @Resource配合注入，供各种其他对象使用
+
+##### @Configuration和@Bean
+
+先看个例子：
+
+~~~java
+// DataSource类型的配置类，其中XxxDataSource一般是第三方库的类
+@Configuration
+public class DataSourceConfig {
+	@Bean(name = "mysqlDataSource") // name如果不写，默认是方法名，因此这一行可以去掉
+	public MysqlDataSource mysqlDataSource() {
+		return new MysqlDataSource();
+	}
+    @Bean
+    public XxxDataSource xxxDataSource() {
+        return new XxxDataSource();
+    }
+    ...
+}
+~~~
+
+形象地说，@Configuration就相当于是父级的`<beans>`目录，而@Bean就相当于是该目录下的一个个`<bean>`标签
+
+~~~xml
+<beans>
+	<bean>1</bean>
+    <bean>2</bean>
+    <bean>3</bean>
+    ...
+</beans>
+~~~
+
+@Configuration注解本质上就是@Component(只不过基本用不到它的实例化对象)，它一般用于修饰`xxxConfig`配置类，这个类的作用主要是声明多个**同一类型**的@Bean方法，并在运行时刻根据这些方法返回的类对象来生成Bean
+
+~~~java
+@Target({ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Component
+public @interface Configuration {
+    String value() default "";
+}
+
+~~~
+
+@Bean的作用前面已经说过了，就是用来修饰返回类实例的方法，并将返回的类实例转化为Bean，默认是**单例模式**，交给Spring容器管理，其他地方可以通过@AutoWired或@Resource取得用@Bean注解的bean
+
+-   name：Bean的名字，默认是方法名
+-   initMethod：容器在初始化Bean后，会调用该属性指定的方法
+-   destroyMethod：容器在销毁Bean前，会调用该属性指定的方法
+-   autowire：指定Bean的自动装配策略，有三种类型：Autowire.BY_NAME, Autowire.BY_TYPE, Autowire.NO
+
+~~~java
+@Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface Bean {
+    @AliasFor("name")
+    String[] value() default {};
+    @AliasFor("value")
+    String[] name() default {};
+    Autowire autowire() default Autowire.NO;
+    String initMethod() default "";
+    String destroyMethod() default "(inferred)";
+}
+~~~
+
+##### @Component,@Controller,@Service,@Repository
+
+###### 区别简介
+
+@Component、@Repository、@Service、@Controller这四个本质上属于同一类注解，用法相同，功能相同，只是名字不同，用于标识不同类型的类
+
+-   @Component ：标注一个普通的Spring Bean类
+-   @Controller：标注一个controller类，通常和@RequestMapping注解配合使用
+-   @Service：标注一个service类
+-   @Repository：标注一个dao类 
+
+被注解的java类当做Bean实例，Bean实例的名称默认是Bean类的首字母小写，其他部分不变
+
+###### @Controller
+
+@Controller标注一个controller类，主要用于处理前端请求并返回结果，通常和@RequestMapping注解配合使用
+
+@RequestMapping：将url映射到特定的类或方法，可以使用**value**属性标识url，使用**method**属性标识其所接受的方法类型，主要是HTTP GET/POST，一旦指定就只能接收该类型，否则所有类型都接受，通常我们会用@GetMapping和@PostMapping注解来表示GET和POST的request请求
+
+-   @GetMapping：等价于@RequestMapping(method = RequestMethod.GET)，**直接从url获得数据**
+-   @PostMapping：等价于@RequestMapping(method = RequestMethod.POST)，**从body中拿数据**
+
+注意，在url上带参数的形式只能是GET请求，如果将带参数的url发给@PostMapping修饰的方法就会报错，@PostMapping修饰的方法一般是用于接收前端发送的请求，前端会把数据塞进body里
+
+前端和后端进行数据传输是用的HTTP协议，[参数提交](https://www.jianshu.com/p/065fc0555056)有两种方式：url和请求体，通常GET请求会把参数放在url中，POST请求会把参数放在请求体中
+
+**从前端传数据到后端**，不论是GET请求还是POST请求，传的都是**键值对数据**，@GetMapping指定了从**url**中拿k-v键值对数据（url数据类型: application/x-www-form-urlencoded），用@RequestParam接收；@PostMapping指定了从**请求体**中拿json键值对数据（请求体数据类型: application/json），用@RequestBody接收
+
+对后端来说，[接收键值对数据](https://cloud.tencent.com/developer/article/1414464)有两种形式：@RequestParam和@RequestBody
+
+-   @RequestParam一般用于接收请求头里的参数(类型为x-www-form-urlencoded)，通常用于接收GET请求，可以将k-v数据绑定到函数参数上，value表示参数名，required表示该参数是否必须存在(默认为true)，defaultValue用于设置value的默认值
+
+    注：像POST请求也可以使用@RequestParam，但必须要将请求体的类型设置为x-www-form-urlencoded
+
+    ~~~java
+    // GET请求url为：http://ip/menuTree.json?appName="demo"&keyword="rpc"
+    // 访问该url相当于直接调用该函数
+    // 等价于@RequestMapping(value="/menuTree.json", method="RequestMethod.GET")
+    @GetMapping("/menuTree.json")
+    public CustomResult menuTree(
+        @RequestParam(value = "appName") String appName,
+        @RequestParam(value = "keyword", required = false) String keyword) {
+        String menu = componentService.getMenuTree(appName, keyword, isOrigin);
+        return new CustomResult(menu);
+    }
+    ~~~
+
+-   @RequestBody用于接收请求体中的数据(类型为json)，通常用于接收POST请求，可以将json数据转为java对象
+
+    ~~~java
+    @PostMapping("/login")
+    public Result login(@RequestBody UserDO requestUser) {
+        return loginService.login(requestUser);
+    }
+    ~~~
+
+**从后端传数据到前端**，一般返回的是html/jsp数据和json数据：
+
+-   返回html/jsp数据：如果只是对类使用@Controller注解，那么在该类@RequestMapping修饰的方法上，要求必须返回html或jsp页面，并且前端会跳转到该页面，如果只是返回普通的数据(比如字符串或其他对象)，就会报错
+
+    在函数中返回html/jsp文件名称即可，这些文件需要放在`/resources/templates`文件下，且html头需要有`<html  xmlns:th="http://www.thymeleaf.org">`声明
+
+    ~~~java
+    @Controller
+    public class xxxController {
+        @GetMapping("/404")
+        public String test() {
+            return "404"; // 这里返回的“404”是文件名，网页会显示404.html
+        }
+    }
+    ~~~
+
+-   返回json数据：@Controller修饰的类，其中的方法再用@ResponseBody修饰，就可以使该方法的返回值以json数据的形式返回，如果是对象，json数据就是{属性名：属性值}的集合
+
+    而@RestController就相当于是@Controller+@ResponseBody，因此被@RestController修饰的类，其中所有方法的返回值都会被解析为json数据
+
+    ~~~java
+    // 返回json数据
+    @Controller
+    public class xxxController {
+        @ResponseBody
+        @GetMapping("/test")
+        public Result test(...) {
+            return new Result();
+        }
+    }
+    等价于...
+    @RestController
+    public class xxxController {
+        @GetMapping("/test")
+        public Result test(...) {
+            return new Result();
+        }   
+    }
+    ~~~
+
+
+
+
+
+后端404转发前端vue：[🔗](http://www.cxyzjd.com/article/Mr_EvanChen/83625082)
+
+
+
+
 
