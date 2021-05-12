@@ -32,7 +32,7 @@ public class MqttConfig {
     private String clientID;
 
     @Bean
-    MqttServer getMqttClient() {
+    MqttServer mqttServer() {
         MqttServer mqttServer = new MqttServer();
         mqttServer.setBroker(broker);
         mqttServer.setTopic(topic);

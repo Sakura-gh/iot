@@ -1,7 +1,5 @@
 package com.gehao.iotserver.web.controller;
 
-import com.gehao.iotserver.biz.service.impl.MqttServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -12,12 +10,9 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class IndexController {
-    @Autowired
-    MqttServiceImpl test;
 
     @GetMapping("test")
     public String test() {
-        System.out.println(test.getBroker());
         return "test";
     }
 }
