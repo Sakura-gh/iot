@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import HelloWorld from '@/components/HelloWorld'
 // 导入新组件
 import AppIndex from '@/components/home/AppIndex'
 import Login from '@/components/Login'
