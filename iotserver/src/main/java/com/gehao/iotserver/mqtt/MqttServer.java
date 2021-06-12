@@ -39,7 +39,7 @@ public class MqttServer {
             connectOptions.setKeepAliveInterval(keepAlive);
 
             // 设置回调函数，用于处理接收到的消息
-            mqttClient.setCallback(new subCallBack());
+            mqttClient.setCallback(new SubCallback());
 
             System.out.println("准备连接到broker：" + broker);
             mqttClient.connect(connectOptions);
@@ -79,7 +79,7 @@ public class MqttServer {
         }
     }
 
-    private class subCallBack implements MqttCallback {
+    private class SubCallback implements MqttCallback {
         @Override
         public void connectionLost(Throwable cause) {
             if (mqttClient == null) {
@@ -97,7 +97,7 @@ public class MqttServer {
         @Override
         public void messageArrived(String topic, MqttMessage message) {
             String m = new String(message.getPayload());
-            System.out.println("接收到topic " + topic + "消息:" + m);
+            System.out.println("接收到topic " + topic + "的消息: " + m);
         }
     }
 }
