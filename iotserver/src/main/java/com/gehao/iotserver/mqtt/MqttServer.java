@@ -1,5 +1,6 @@
 package com.gehao.iotserver.mqtt;
 
+import com.gehao.iotserver.biz.bo.IotMessage;
 import lombok.Data;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
@@ -7,6 +8,7 @@ import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+import com.alibaba.fastjson.JSON;
 
 /**
  * @author gehao
@@ -96,7 +98,8 @@ public class MqttServer {
 
         @Override
         public void messageArrived(String topic, MqttMessage message) {
-            String m = new String(message.getPayload());
+            String msg = new String(message.getPayload());
+            IotMessage iotMessage = JSON.parseObject(msg, IotMessage.class);
             System.out.println("接收到topic " + topic + "的消息: " + m);
         }
     }
