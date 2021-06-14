@@ -3,40 +3,27 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
-import store from './store'
-import ElementUI from 'element-ui'
-import 'element-ui/lib/theme-chalk/index.css'
 
-// 设置反向代理，前端请求默认发送到 http://localhost:8443/api
-var axios = require('axios')
-axios.defaults.baseURL = 'http://localhost:8443/api'
-// 全局注册，之后可在其他组件中通过 this.$axios 发送数据
-Vue.prototype.$axios = axios
-Vue.config.productionTip = false
+// 引入全局样式文件
+import './assets/css/global.less'
 
-Vue.use(ElementUI)
+// 引入echart, 挂载到vue的原型对象上, 全局只需要用this.$echarts即可使用
+import echarts from 'echarts'
+Vue.prototype.$echarts = echarts
 
-router.beforeEach((to, from, next) => {
-  if (to.meta.requireAuth) {
-    if (store.state.user.username) {
-      next()
-    } else {
-      next({
-        path: 'login',
-        query: { redirect: to.fullPath }
-      })
-    }
-  } else {
-    next()
-  }
+// 将axios挂载到vue的原型对象上, 全局只需要用this.$axios即可使用 
+import axios from 'axios'
+Vue.prototype.$http = axios.create({
+  timeout: 20000, // 20s超时时间
+  baseURL: '/api' // 后端地址      
 })
+
+Vue.config.productionTip = false
 
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
-  render: h => h(App),
   router,
-  store,
   components: { App },
   template: '<App/>'
 })
