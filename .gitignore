@@ -1,3 +1,4 @@
 *.DS_Store
 .idea
-iot-vue/*
+iot-vue/node_modules/*
+*.class
