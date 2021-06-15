@@ -5,7 +5,6 @@
 </template>
 
 <script>
-import chalk from '../../static/chalk'
 export default {
 	data() {
 		return {

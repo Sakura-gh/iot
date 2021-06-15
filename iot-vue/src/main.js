@@ -6,6 +6,8 @@ import router from './router'
 
 // 引入全局样式文件
 import './assets/css/global.less'
+// 引入图表自定义主题
+import chalk from '../static/chalk'
 
 // 引入echart, 挂载到vue的原型对象上, 全局只需要用this.$echarts即可使用
 import echarts from 'echarts'

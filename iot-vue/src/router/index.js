@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import DataInfoPage from '@/components/DataInfoPage'
-import OnlineStatus from '@/components/OnlineStatus'
+import OnlineStatusPage from '@/components/OnlineStatusPage'
+import TrackMapPage from '@/components/TrackMapPage'
 
 Vue.use(Router)
 
@@ -13,7 +14,11 @@ export default new Router({
     },
     {
         path: '/onlinestatus',
-        component: OnlineStatus
+        component: OnlineStatusPage
+    },
+    {
+        path: '/trackmap',
+        component: TrackMapPage
     }
   ]
 })
