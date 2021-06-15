@@ -350,3 +350,99 @@ public @interface Bean {
 
 ☆mqtt类的设计
 
+
+
+vue入门：https://www.cnblogs.com/keepfool/p/5619070.html
+
+前端可视化--大屏
+
+https://blog.csdn.net/Mrkaizi/article/details/112233166
+
+黑马：https://juejin.cn/post/6960125126008389669#heading-38、https://www.bilibili.com/video/BV1VZ4y1M7ZC?p=2
+
+vue修改proxyTable解决**跨域**请求：[1](https://www.geek-share.com/detail/2789999270.html)
+
+到config/index.js文件中，找到proxyTable，加上：
+
+~~~js
+proxyTable: {
+    '/api': {
+        target: 'http://localhost:8443', // 后端地址
+            changeOrigin: true, // 允许跨域
+                pathRewrite: {
+                    '^/api': '' // 重写路径
+                }
+    }
+},
+~~~
+
+前端请求url中的所有`/api`都会被替换成`/`，由于我们在main.js里把axios的baseURL设置成了`/api`，因此调用this.$http.get(“datainfo”)/post("datainfo")发起http请求时，前端的请求url其实是`/api/datainfo`，然后根据我们的proxyTable，会把这个`/api`替换成空，即url变成了`/datainfo`，然后加上target地址，变成了`http://localhost:8443/datainfo`，注意，此时我们在后端springboot就要配置为`@GetMapping("datainfo")`，而不是`@GetMapping("api/datainfo")`
+
+地图轨迹：https://blog.csdn.net/yc_1993/article/details/51439365
+
+data：id、位置(经纬度)、时间(info和timestamp)、值(value)->报警信息(alert)
+
+~~~bash
+Publishing message: {
+	"alert":1,
+	"clientId":"device0005",
+	"info":"Device Data 2021/06/15 00:29:44",
+	"lat":30.4978018283844,
+	"lng":120.02572371959687,
+	"timestamp":1623688184668,
+	"value":85}
+~~~
+
+图表规划：vue每秒刷新
+
+-   设备在线数量：单折线图
+-   设备值：多折线图+柱形图
+-   位置：地图,https://www.pianshen.com/article/5319354514/
+
+如何使用百度地图api的bmap：其实echarts包中已经有现成的bmap，而我们早就已经install过echarts了，因此无需下载任何文件，如果想要显示地图，只需两步：
+
+-   [生成百度地图密钥](https://lbsyun.baidu.com/apiconsole/key#/home)并在`index.html`中引入
+
+    ~~~html
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=HS96e7pqaFkaXo6yS1h6iNIh01T5N42g"></script>
+    ~~~
+
+-   在想要使用map地图的vue组件的script模块中，导入bmap即可
+
+    ~~~html
+    <script>
+    import 'echarts/dist/extension/bmap.min.js'
+    export default {
+        ...
+    }
+    </script>
+    ~~~
+
+-   测试代码：如果能够显示地图表示成功导入
+
+    ~~~js
+    methods: {
+        initChart() {
+            this.chartInstance = this.$echarts.init(this.$refs.track_map_ref)
+            const initOption = {
+                bmap: {
+                    center: [113.844038, 22.907044],//默认中心点;
+                    zoom: 12,//缩放级别；
+                    roam: false,//是否缩放
+                    mapStyle:{style:'hardedge'},
+                    mapOptions: {
+                        enableMapClick: false//能都是地图可以点击
+                    },     
+                },
+                geo: {                
+                    map: 'bmap', // 使用百度地图的bamp                 
+                    type: 'map'
+                },
+                series: []    
+            }
+            this.chartInstance.setOption(initOption)
+        },
+    }
+    ~~~
+
+    

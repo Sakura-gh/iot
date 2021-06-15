@@ -99,8 +99,8 @@ public class MqttServer {
         @Override
         public void messageArrived(String topic, MqttMessage message) {
             String msg = new String(message.getPayload());
+            System.out.println("接收到topic " + topic + "的消息: " + msg);
             IotMessage iotMessage = JSON.parseObject(msg, IotMessage.class);
-            System.out.println("接收到topic " + topic + "的消息: " + m);
         }
     }
 }
