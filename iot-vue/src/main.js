@@ -10,8 +10,11 @@ import './assets/css/global.less'
 import chalk from '../static/chalk'
 
 // 引入echart, 挂载到vue的原型对象上, 全局只需要用this.$echarts即可使用
-import echarts from 'echarts'
+// import echarts from 'echarts'
+import * as echarts from 'echarts'
 Vue.prototype.$echarts = echarts
+// 引入百度地图api
+import 'echarts/extension/bmap/bmap'
 
 // 将axios挂载到vue的原型对象上, 全局只需要用this.$axios即可使用 
 import axios from 'axios'
