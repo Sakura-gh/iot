@@ -5,7 +5,6 @@
 </template>
 
 <script>
-import 'echarts/map/js/province/zhejiang'
 export default {
     data() {
         return {
@@ -14,14 +13,16 @@ export default {
             deviceIds: null,
             iotMessages: new Map(),
             messageNum: 20,
+            centerX: 0.0,
+            centerY: 0.0,
             timerId: null,
             isShowTack: false // 是否显示轨迹
         }
     },
     mounted() {
         this.initChart()
-        this.getData()
-        // this.getDataInternal()
+        // this.getData()
+        this.getDataInternal()
         window.addEventListener('resize', this.screenAdapter)
         this.screenAdapter()
     },
@@ -93,6 +94,8 @@ export default {
             // seriesArr的每个元素都是一个设备下的所有散点数据
             // 如果想要在地图中显示，就给图表增加使用地图的坐标系的配置
             var locations = new Array()
+            this.centerX = 0
+            this.centerY = 0
             for(var i = 0; i < this.deviceIds.length; i++) {
                 var msg = this.iotMessages.get(this.deviceIds[i])[0]
                 // console.log(msg)
@@ -100,28 +103,39 @@ export default {
                     name: this.deviceIds[i],
                     value: [msg.lng, msg.lat]
                 })
+                this.centerX += msg.lng
+                this.centerY += msg.lat
             }
+            this.centerX = this.centerX / this.deviceIds.length
+            this.centerY = this.centerY / this.deviceIds.length
             const dataOption = {
                 geo: {
                     map: "bmap",
+                    itemStyle: {}
                 },
                 bmap: {
-                    center: [this.iotMessages.get(this.deviceIds[0])[0].lng, this.iotMessages.get(this.deviceIds[0])[0].lat],
-                    zoom: 10, 
+                    center: [this.centerX, this.centerY],
+                    zoom: 11, 
                     roam: true
                 },
                 series: [
                     {
                         name: '设备分布',
                         type: "effectScatter",
-                        // rippleEffect: { // 涟漪效果修改
-                        //     scale: 3,
-                        //     brushType: 'stroke'
-                        // },
                         coordinateSystem: "bmap",  
                         animation: true, // 设置为false时，拖动地图散点的移动不会有延时         
                         symbol:'circle',
-                        symbolSize: 15,
+                        symbolSize: 20,
+                        itemStyle: {
+                            normal: {
+                                "color": "#B34038"
+                            }
+                        },
+                        rippleEffect: {
+                            period: 4, 
+                            scale: 2.5, 
+                            brushType: "fill"
+                        },
                         data: locations,
                         label: {
                             normal: {
@@ -134,38 +148,19 @@ export default {
                             }
                         }
                     },
-                    // 这一部分仅为了适配echarts本身的bug: chart.setOption(option, {replaceMerge: string})无法做到完全删除
-                    // 详情可见我提的issue：https://github.com/apache/echarts/issues/15186
+                    // 这一部分仅为了适配echarts4.9.0没法使用chart.setOption(option, {replaceMerge: string})的问题
+                    // 只能对series进行强制覆盖
                     {
-                        name: '设备分布',
-                        type: "effectScatter",
-                        // rippleEffect: { // 涟漪效果修改
-                        //     scale: 3,
-                        //     brushType: 'stroke'
-                        // },
-                        coordinateSystem: "bmap",  
-                        animation: true, // 设置为false时，拖动地图散点的移动不会有延时         
-                        symbol:'circle',
-                        symbolSize: 1,
-                        data: locations,
-                        label: {
-                            normal: {
-                                formatter: '{b}',
-                                position: 'top',
-                                show: false
-                            },
-                            emphasis: {
-                                show: false
-                            }
-                        }
-                    },
+                        name: 'null',
+                        type: "lines",   
+                    }
                 ],
             }
-            console.log('locations:')
-            console.log(this.chartInstance.getOption())
-            this.chartInstance.setOption(dataOption, {replaceMerge: ['series', 'dataRange', 'geo']})
-            // this.chartInstance.setOption(dataOption)
-            console.log(this.chartInstance.getOption())
+            // console.log('locations:')
+            // console.log(this.chartInstance.getOption())
+            // this.chartInstance.setOption(dataOption, {replaceMerge: ['series', 'dataRange', 'geo']})
+            this.chartInstance.setOption(dataOption)
+            // console.log(this.chartInstance.getOption())
         },
         screenAdapter() {
             const adapterOption = {}
@@ -196,6 +191,8 @@ export default {
             // 获取用于显示的坐标点和连接线数据
             var lineData = new Array()
             var pointData = new Array()
+            this.centerX = 0
+            this.centerY = 0
             for (var i = 0; i < msg.length - 1; i++) {
                 // 连接线，from->to
                 lineData.push({
@@ -220,7 +217,11 @@ export default {
                     name: i + 1,
                     value: [msg[i + 1].lng, msg[i + 1].lat]
                 })
+                this.centerX += msg[i].lng
+                this.centerY += msg[i].lat
             }
+            this.centerX = this.centerX / (msg.length - 1)
+            this.centerY = this.centerY / (msg.length - 1)
 
             const dataOption = {
                 geo: {
@@ -228,31 +229,12 @@ export default {
                     polyline: true,
                     progressiveThreshold: 100,
                     progressive: 400,
-                    label: {
-                        "emphasis": {
-                            "show": false
-                        }
-                    },
-                    roam: true,
-                    itemStyle: {
-                        "normal": {
-                            "areaColor": "#E7A060",   //连接线的颜色
-                            "borderColor": "#ff9900"   //移动飞线的颜色
-                        },
-                        "emphasis": {
-                            "areaColor": "#F300FF" 
-                        }
-                    }
+                    roam: true
                 },
-                dataRange: {
-                    show:false,
-                    min : 0,
-                    max : 100,
-                    calculable : true,
-                    color: ['#ff3333', 'orange', 'yellow','lime','aqua'],
-                    textStyle:{
-                        color:'#fff'
-                    }
+                bmap: {
+                    center: [this.centerX, this.centerY],
+                    zoom: 11, 
+                    roam: true
                 },
                 series: [
                     {
@@ -260,17 +242,16 @@ export default {
                         name: '飞线',
                         type: "lines",
                         coordinateSystem: "bmap",
-                        symbol: ['none', 'arrow'],
-                        effect: {
+                        effect: { // 产生飞线动态箭头效果
                             symbolSize: 5,
-                            "show": true,
-                            "scaleSize": 2,
-                            "period": 20,
-                            "color": '#FFF',
-                            "shadowBlur": 10,
+                            show: true, // 这个属性会导致locations的点变粗
+                            scaleSize: 2,
+                            period: 20,
+                            color: '#FFF',
+                            shadowBlur: 10,
                             constantSpeed: 50
                         },
-                        lineStyle: {
+                        lineStyle: { // 飞线本身的渐变样式
                             "normal": {
                                 "color": new this.$echarts.graphic.LinearGradient(0, 0, 0, 1, [{
                                     offset: 0,
@@ -287,8 +268,8 @@ export default {
                         data:lineData,
                     },
                     {
-                        //终点点位样式
-                        name: '终点',
+                        // 位置点位样式
+                        name: '位置点',
                         type: "effectScatter",
                         coordinateSystem: "bmap",
                         rippleEffect: {
@@ -299,7 +280,7 @@ export default {
                         symbolSize : 10,
                         itemStyle:{
                             normal:{
-                                "color": "#FF4040"
+                                "color": "#7EF94C"
                             },
                         },
                         label: {
@@ -317,11 +298,11 @@ export default {
                     }
                 ],
             }
-            console.log('track:')
-            console.log(this.chartInstance.getOption())
-            this.chartInstance.setOption(dataOption, {replaceMerge: ['series', 'dataRange', 'geo']})
-            // this.chartInstance.setOption(dataOption)
-            console.log(this.chartInstance.getOption())
+            // console.log('track:')
+            // console.log(this.chartInstance.getOption())
+            // this.chartInstance.setOption(dataOption, {replaceMerge: ['series', 'dataRange', 'geo']})
+            this.chartInstance.setOption(dataOption)
+            // console.log(this.chartInstance.getOption())
         },
         // // 重置echarts，性能低，但目前官方并没有提供更好的方案
         // resetEcharts() {
