@@ -23,12 +23,16 @@
             ></i>
           </div>
         </div>
-        <div id="left-bottom" :class="[status.totalDataInfo ? 'fullScreen' : '']">
+        <div
+          id="left-bottom"
+          :class="[status.totalDataInfo ? 'fullScreen' : '']"
+        >
           <TotalDataInfo ref="totalDataInfo"></TotalDataInfo>
           <div class="resize">
-            <i 
+            <i
               @click="changeSize('totalDataInfo')"
-              class="el-icon-copy-document">
+              class="el-icon-copy-document"
+            >
             </i>
           </div>
         </div>
@@ -43,7 +47,10 @@
             ></i>
           </div>
         </div>
-        <div id="middle-bottom" :class="[status.onlineStatus ? 'fullScreen' : '']">
+        <div
+          id="middle-bottom"
+          :class="[status.onlineStatus ? 'fullScreen' : '']"
+        >
           <OnlineStatus ref="onlineStatus"></OnlineStatus>
           <div class="resize">
             <i
@@ -57,18 +64,17 @@
         <div id="right-top" :class="[status.valueInfo ? 'fullScreen' : '']">
           <ValueInfo ref="valueInfo"></ValueInfo>
           <div class="resize">
-            <i
-              @click="changeSize('valueInfo')" 
-              class="el-icon-copy-document">
+            <i @click="changeSize('valueInfo')" class="el-icon-copy-document">
             </i>
           </div>
         </div>
         <div id="right-bottom" :class="[status.valueInfo2 ? 'fullScreen' : '']">
           <ValueInfo2 ref="valueInfo2"></ValueInfo2>
           <div class="resize">
-            <i 
-              @click="changeSize('valueInfo2')" 
-              class="el-icon-copy-document"></i>
+            <i
+              @click="changeSize('valueInfo2')"
+              class="el-icon-copy-document"
+            ></i>
           </div>
         </div>
       </section>
@@ -77,12 +83,12 @@
 </template>
 
 <script>
-import DataInfo from "@/components/DataInfo"
-import TotalDataInfo from '@/components/TotalDataInfo'
-import ValueInfo from '@/components/ValueInfo'
-import ValueInfo2 from '@/components/ValueInfo2'
-import OnlineStatus from "@/components/OnlineStatus"
-import TrackMap from "@/components/TrackMap"
+import DataInfo from "@/components/DataInfo";
+import TotalDataInfo from "@/components/TotalDataInfo";
+import ValueInfo from "@/components/ValueInfo";
+import ValueInfo2 from "@/components/ValueInfo2";
+import OnlineStatus from "@/components/OnlineStatus";
+import TrackMap from "@/components/TrackMap";
 
 export default {
   data() {
@@ -96,14 +102,14 @@ export default {
         onlineStatus: false,
         trackMap: false,
       },
-      timerId: null
+      timerId: null,
     };
   },
   mounted() {
-      this.showTime()
+    this.showTime();
   },
   destroyed() {
-      clearInterval(this.timerId)
+    clearInterval(this.timerId);
   },
   methods: {
     changeSize(chartName) {
@@ -117,13 +123,24 @@ export default {
       });
     },
     showTime() {
-        this.timerId = setInterval(this.updateTime, 1000)
+      this.timerId = setInterval(this.updateTime, 1000);
     },
     updateTime() {
-        var timeSpan = this.$refs.time
-        var date = new Date()
-        timeSpan.innerHTML = (date.getFullYear() + '/' + date.getMonth() + '/' + date.getDay() + ' ' + date.getHours() + ':' + (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) + ':' + (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds()))
-    }
+      var timeSpan = this.$refs.time;
+      var date = new Date();
+      timeSpan.innerHTML =
+        date.getFullYear() +
+        "/" +
+        date.getMonth() +
+        "/" +
+        date.getDay() +
+        " " +
+        date.getHours() +
+        ":" +
+        (date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes()) +
+        ":" +
+        (date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds());
+    },
   },
   components: {
     DataInfo,
