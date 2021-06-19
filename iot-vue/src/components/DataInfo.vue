@@ -41,7 +41,7 @@ export default {
             // 对图表进行初始化配置，包括除了大小和数据之外的配置项
             const initOption = {
                 title: {
-                    text: 'Ⅰ设备接收数据量统计',
+                    text: 'Ⅰ各设备接收的数据量',
                     left: 5,
                     top: 5
                 },

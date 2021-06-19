@@ -2,6 +2,9 @@
   <div class="screen-container">
     <header class="screen-header">
       <div>
+        <span class="title-left">author: gehao</span>
+      </div>
+      <div>
         <img src="@/assets/img/header_border_dark.png" alt="" />
       </div>
       <span class="title">IOT可视化系统</span>
@@ -119,7 +122,7 @@ export default {
     updateTime() {
         var timeSpan = this.$refs.time
         var date = new Date()
-        timeSpan.innerHTML = (date.getFullYear() + '/' + date.getMonth() + '/' + date.getDay() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds())
+        timeSpan.innerHTML = (date.getFullYear() + '/' + date.getMonth() + '/' + date.getDay() + ' ' + date.getHours() + ':' + (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) + ':' + (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds()))
     }
   },
   components: {
@@ -167,6 +170,14 @@ export default {
     top: 50%;
     font-size: 20px;
     transform: translate(-50%, -50%);
+  }
+  .title-left {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    left: 0px;
+    top: 50%;
+    transform: translateY(-80%);
   }
   .title-right {
     display: flex;

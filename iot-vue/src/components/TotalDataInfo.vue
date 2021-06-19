@@ -29,7 +29,7 @@ export default {
             this.chartInstance = this.$echarts.init(this.$refs.total_datainfo_ref, 'chalk')
             const initOption = {
                 title: {
-                    text: 'Ⅰ接收数据总量情况',
+                    text: 'Ⅰ接收的数据总量',
                     left: 5,
                     top: 5
                 },
@@ -81,6 +81,9 @@ export default {
         async getData() {
             // get data
             var {data: num} = await this.$http.get('message-total-num')
+            if (num == -1) {
+                return
+            }
             this.totalDataNums.push(num)
             if (this.totalDataNums.length > this.showNums) {
                 this.totalDataNums.shift()

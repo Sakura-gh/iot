@@ -30,7 +30,7 @@ export default {
             this.chartInstance = this.$echarts.init(this.$refs.online_status_ref, 'chalk')
             const initOption = {
                 title: {
-                    text: 'Ⅰ最近20s的设备在线数量情况'
+                    text: 'Ⅰ设备在线数量'
                 },
                 grid: {
                     left: '3%', 
@@ -114,7 +114,7 @@ export default {
                 // 文字大小
                 title: {
                     textStyle: {
-                        fontSize: titleFontSize
+                        fontSize: titleFontSize / 3 * 2
                     }
                 },                
             }

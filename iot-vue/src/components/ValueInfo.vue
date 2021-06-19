@@ -34,7 +34,7 @@ export default {
             this.chartInstance = this.$echarts.init(this.$refs.valueinfo_ref, 'chalk')
             const initOption = {
                 title: {
-                    text: 'Ⅰ设备value值情况',
+                    text: 'Ⅰ各设备最新value值',
                     left: 5,
                     top: 5
                 },

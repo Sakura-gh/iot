@@ -98,6 +98,9 @@ export default {
             this.centerY = 0
             for(var i = 0; i < this.deviceIds.length; i++) {
                 var msg = this.iotMessages.get(this.deviceIds[i])[0]
+                if (msg == null) {
+                    return
+                }
                 // console.log(msg)
                 locations.push({
                     name: this.deviceIds[i],
