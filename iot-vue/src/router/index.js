@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import DataInfoPage from '@/components/DataInfoPage'
+import TotalDataInfoPage from '@/components/TotalDataInfoPage'
 import OnlineStatusPage from '@/components/OnlineStatusPage'
 import TrackMapPage from '@/components/TrackMapPage'
 import ScreenPage from '@/components/ScreenPage'
@@ -20,6 +21,10 @@ export default new Router({
     {
       path: '/datainfo',
       component: DataInfoPage
+    },
+    {
+        path: '/totaldatainfo',
+        component: TotalDataInfoPage
     },
     {
         path: '/onlinestatus',
