@@ -14,13 +14,14 @@ export default {
             currentPage: 1, // 当前显示的是第几页 
             totalPage: 0, // 一共有多少页
             numInPage: 3, // 一页显示的设备数
-            timerId: null // 定时器id
+            timerId: null, // 访问服务器定时器
+            sildeTimerId: null // 换页定时器id
         }
 	},
     // vue生命周期在mounted之后dom结构加载完成
     mounted() {
         this.initChart()
-        this.getData()
+        this.getDataInternal()
         window.addEventListener('resize', this.screenAdapter)
         // 在界面第一次加载完成后，主动进行屏幕大小适配
         this.screenAdapter()
@@ -28,6 +29,7 @@ export default {
     // 当该组件被销毁时，取消定时器和屏幕大小监听
     destroyed() {
         // 取消定时器
+        clearInterval(this.sildeTimerId)
         clearInterval(this.timerId)
         // 取消屏幕大小监听
         window.removeEventListener('resize', this.screenAdapter)
@@ -40,8 +42,8 @@ export default {
             const initOption = {
                 title: {
                     text: 'Ⅰ设备接收数据量统计',
-                    left: 20,
-                    top: 20
+                    left: 5,
+                    top: 5
                 },
                 grid: {
                     top: '20%',
@@ -106,12 +108,19 @@ export default {
             // 对图表对象进行鼠标事件的监听
             // 鼠标移入图表时，关闭定时器，取消图表的自动换页
             this.chartInstance.on('mouseover', () => {
-                clearInterval(this.timerId)
+                clearInterval(this.sildeTimerId)
             })
             // 鼠标移出图表时，重新开启定时器
             this.chartInstance.on('mouseout', () => {
-                this.startInterval()
+                this.sildeInterval()
             })
+            // 开启换页的定时器
+            this.sildeInterval()            
+        },
+        getDataInternal() {
+            this.timerId = setInterval(() => {
+                this.getData()
+            }, 1000)
         },
         // 获取服务器数据
         async getData() {
@@ -136,8 +145,6 @@ export default {
             this.totalPage = this.deviceIds.length % this.numInPage === 0 ? this.deviceIds.length / this.numInPage : this.deviceIds.length / this.numInPage + 1
             // 更新图表
             this.updateChart()
-            // 启动定时器
-            this.startInterval()
         },
         // 更新图表
         updateChart() {
@@ -160,18 +167,17 @@ export default {
             this.chartInstance.setOption(dataOption)
         },
         // 开启定时器
-        startInterval() {
+        sildeInterval() {
             // 如果之前的定时器还开着，就关闭
-            if (this.timerId) {
-                clearInterval(this.timerId)
+            if (this.sildeTimerId) {
+                clearInterval(this.sildeTimerId)
             }
             // 每隔3s执行一次
-            this.timerId = setInterval(() => {
+            this.sildeTimerId = setInterval(() => {
                 this.currentPage++
                 if (this.currentPage > this.totalPage) {
                     this.currentPage = 1
                 }
-                this.updateChart()
             }, 3000)
         },
         // 浏览器大小变化时，进行屏幕适配，包括大小的配置项

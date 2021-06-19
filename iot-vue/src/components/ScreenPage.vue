@@ -2,15 +2,11 @@
   <div class="screen-container">
     <header class="screen-header">
       <div>
-        <!-- <img src="/static/img/header_border_dark.png" alt="" /> -->
+        <img src="@/assets/img/header_border_dark.png" alt="" />
       </div>
-      <span class="logo">
-        <!-- <img src="/static/img/logo_dark.png" alt="" /> -->
-      </span>
       <span class="title">IOT可视化系统</span>
       <div class="title-right">
-        <!-- <img src="/static/img/qiehuan_dark.png" class="qiehuan" /> -->
-        <span class="datetime">2049-01-01 00:00:00</span>
+        <span class="datetime" ref="time"></span>
       </div>
     </header>
     <div class="screen-body">
@@ -25,7 +21,7 @@
           </div>
         </div>
         <div id="left-bottom" :class="[status.totalDataInfo ? 'fullScreen' : '']">
-            <TotalDataInfo ref="totalDataInfo"></TotalDataInfo>
+          <TotalDataInfo ref="totalDataInfo"></TotalDataInfo>
           <div class="resize">
             <i 
               @click="changeSize('totalDataInfo')"
@@ -55,14 +51,21 @@
         </div>
       </section>
       <section class="screen-right">
-        <div id="right-top">
+        <div id="right-top" :class="[status.valueInfo ? 'fullScreen' : '']">
+          <ValueInfo ref="valueInfo"></ValueInfo>
           <div class="resize">
-            <i class="el-icon-copy-document"></i>
+            <i
+              @click="changeSize('valueInfo')" 
+              class="el-icon-copy-document">
+            </i>
           </div>
         </div>
-        <div id="right-bottom">
+        <div id="right-bottom" :class="[status.valueInfo2 ? 'fullScreen' : '']">
+          <ValueInfo2 ref="valueInfo2"></ValueInfo2>
           <div class="resize">
-            <i class="el-icon-copy-document"></i>
+            <i 
+              @click="changeSize('valueInfo2')" 
+              class="el-icon-copy-document"></i>
           </div>
         </div>
       </section>
@@ -71,10 +74,13 @@
 </template>
 
 <script>
-import DataInfo from "@/components/DataInfo";
+import DataInfo from "@/components/DataInfo"
 import TotalDataInfo from '@/components/TotalDataInfo'
-import OnlineStatus from "@/components/OnlineStatus";
-import TrackMap from "@/components/TrackMap";
+import ValueInfo from '@/components/ValueInfo'
+import ValueInfo2 from '@/components/ValueInfo2'
+import OnlineStatus from "@/components/OnlineStatus"
+import TrackMap from "@/components/TrackMap"
+
 export default {
   data() {
     return {
@@ -82,10 +88,19 @@ export default {
       status: {
         dataInfo: false,
         totalDataInfo: false,
+        valueInfo: false,
+        valueInfo2: false,
         onlineStatus: false,
         trackMap: false,
       },
+      timerId: null
     };
+  },
+  mounted() {
+      this.showTime()
+  },
+  destroyed() {
+      clearInterval(this.timerId)
   },
   methods: {
     changeSize(chartName) {
@@ -98,10 +113,20 @@ export default {
         this.$refs[chartName].screenAdapter();
       });
     },
+    showTime() {
+        this.timerId = setInterval(this.updateTime, 1000)
+    },
+    updateTime() {
+        var timeSpan = this.$refs.time
+        var date = new Date()
+        timeSpan.innerHTML = (date.getFullYear() + '/' + date.getMonth() + '/' + date.getDay() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds())
+    }
   },
   components: {
     DataInfo,
     TotalDataInfo,
+    ValueInfo,
+    ValueInfo2,
     OnlineStatus,
     TrackMap,
   },
@@ -151,24 +176,9 @@ export default {
     top: 50%;
     transform: translateY(-80%);
   }
-  .qiehuan {
-    width: 28px;
-    height: 21px;
-    cursor: pointer;
-  }
   .datetime {
     font-size: 15px;
     margin-left: 10px;
-  }
-  .logo {
-    position: absolute;
-    left: 0px;
-    top: 50%;
-    transform: translateY(-80%);
-    img {
-      height: 35px;
-      width: 128px;
-    }
   }
 }
 .screen-body {
@@ -180,11 +190,11 @@ export default {
     height: 100%;
     width: 27.6%;
     #left-top {
-      height: 53%;
+      height: 34%;
       position: relative;
     }
     #left-bottom {
-      height: 31%;
+      height: 50%;
       margin-top: 25px;
       position: relative;
     }
@@ -210,11 +220,11 @@ export default {
     height: 100%;
     width: 27.6%;
     #right-top {
-      height: 46%;
+      height: 34%;
       position: relative;
     }
     #right-bottom {
-      height: 38%;
+      height: 50%;
       margin-top: 25px;
       position: relative;
     }
@@ -226,7 +236,7 @@ export default {
   top: 20px;
   cursor: pointer;
 }
-section > div {
-  border: 1px solid red;
-}
+// section > div {
+//   border: 1px solid red;
+// }
 </style>

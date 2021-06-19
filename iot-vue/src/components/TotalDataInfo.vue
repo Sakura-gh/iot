@@ -1,6 +1,6 @@
 <template>
     <div class="com-container">
-        <div class="com-chart" ref="total_datainfo_ref">awda</div>
+        <div class="com-chart" ref="total_datainfo_ref"></div>
     </div>
 </template>
 
@@ -29,13 +29,15 @@ export default {
             this.chartInstance = this.$echarts.init(this.$refs.total_datainfo_ref, 'chalk')
             const initOption = {
                 title: {
-                    text: 'Ⅰ接收数据总量情况'
+                    text: 'Ⅰ接收数据总量情况',
+                    left: 5,
+                    top: 5
                 },
                 grid: {
-                    left: '3%', 
-                    top: '20%',
-                    right: '4%',
-                    bottom: '5%',
+                    top: '15%',
+                    left: '3%',
+                    right: '6%',
+                    bottom: '3%',
                     containLabel: true
                 },
                 tooltip: {
@@ -52,18 +54,18 @@ export default {
                     type: 'line',
                     // 折线颜色
                     itemStyle: {
-                        color: 'rgba(22, 242, 217, 1)'
+                        color: 'rgba(250, 105, 0, 1)'
                     },
                     // 折线下方的区域颜色，从上到下，透明度从50%到0%
                     areaStyle: {
                         color: new this.$echarts.graphic.LinearGradient(0, 0, 0, 1, [
                             {
                                 offset: 0,
-                                color: 'rgba(22, 242, 217, 0.5)' 
+                                color: 'rgba(250, 105, 0, 0.5)' 
                             },
                             {
                                 offset: 1,
-                                color: 'rgba(22, 242, 217, 0)' 
+                                color: 'rgba(250, 105, 0, 0)' 
                             }
                         ])
                     }                
