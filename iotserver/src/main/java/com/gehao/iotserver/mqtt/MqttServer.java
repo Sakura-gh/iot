@@ -1,6 +1,9 @@
 package com.gehao.iotserver.mqtt;
 
-import com.gehao.iotserver.biz.bo.IotMessage;
+import com.alibaba.fastjson.JSON;
+
+import com.gehao.iotserver.biz.service.IotMessageService;
+import com.gehao.iotserver.dal.dataobject.IotMessageDO;
 import lombok.Data;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
@@ -8,13 +11,16 @@ import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
-import com.alibaba.fastjson.JSON;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author gehao
  */
 @Data
 public class MqttServer {
+    @Autowired
+    IotMessageService iotMessageService;
+
     private String broker;
 
     private String topic;
@@ -100,7 +106,9 @@ public class MqttServer {
         public void messageArrived(String topic, MqttMessage message) {
             String msg = new String(message.getPayload());
             System.out.println("接收到topic " + topic + "的消息: " + msg);
-            IotMessage iotMessage = JSON.parseObject(msg, IotMessage.class);
+            IotMessageDO iotMessage = JSON.parseObject(msg, IotMessageDO.class);
+            // 将iot数据插入数据库
+            iotMessageService.insertMessage(iotMessage);
         }
     }
 }

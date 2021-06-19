@@ -1,6 +1,8 @@
 package com.gehao.iotserver.configuration;
 
+import com.gehao.iotserver.dal.mapper.IotMessageMapper;
 import com.gehao.iotserver.mqtt.MqttServer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,6 +33,9 @@ public class MqttConfig {
     @Value("${iot.clientID}")
     private String clientID;
 
+    @Autowired
+    IotMessageMapper iotMessageMapper;
+
     /**
      * 只有放在@Configuration里，才能在创建Bean的时刻正确读到.properties文件里的数据，
      * 其余component只有在创建完Bean之后才能读到.properties数据，创建时刻数据为null
@@ -43,6 +48,7 @@ public class MqttConfig {
      */
     @Bean
     MqttServer mqttServer() {
+        //iotMessageMapper.deleteAll(); // 初始化时清空数据库中的所有数据
         MqttServer mqttServer = new MqttServer();
         mqttServer.setBroker(broker);
         mqttServer.setTopic(topic);
