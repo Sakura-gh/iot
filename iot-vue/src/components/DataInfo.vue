@@ -9,10 +9,11 @@ export default {
 	data() {
 		return {
             chartInstance: null, // 图表实例
-            allData: null, // 服务端返回的数据
+            deviceIds: null, // 设备id
+            deviceDataNums: null, // 每台设备对应的数据量
             currentPage: 1, // 当前显示的是第几页 
             totalPage: 0, // 一共有多少页
-            numInPage: 2, // 一页显示的设备数
+            numInPage: 3, // 一页显示的设备数
             timerId: null // 定时器id
         }
 	},
@@ -114,15 +115,25 @@ export default {
         },
         // 获取服务器数据
         async getData() {
-            const {data: ret} = await this.$http.get('datainfo')
-            // console.log(ret)
-            this.allData = ret
-            // 按id进行排序
-            this.allData.sort((a, b) => {
-                return a.clientId < b.clientId;
+            // 获取device ids
+            var {data: ids} = await this.$http.get('device-ids')
+            this.deviceIds = ids
+            this.deviceIds.sort((a, b) => {
+                return a < b;
             })
+            // 获取每台device对应的数据总量
+            this.deviceDataNums = new Array()
+            for (var i = 0; i < this.deviceIds.length; i++) {
+                var {data: num} = await this.$http.get('message-num-by-id', {
+                    params: {
+                        id: this.deviceIds[i]
+                    }
+                })
+                this.deviceDataNums.push(num)
+            }
+
             // 计算总页数
-            this.totalPage = this.allData.length % this.numInPage === 0 ? this.allData.length / this.numInPage : this.allData.length / this.numInPage + 1
+            this.totalPage = this.deviceIds.length % this.numInPage === 0 ? this.deviceIds.length / this.numInPage : this.deviceIds.length / this.numInPage + 1
             // 更新图表
             this.updateChart()
             // 启动定时器
@@ -130,23 +141,18 @@ export default {
         },
         // 更新图表
         updateChart() {
-            const start = (this.currentPage - 1) * this.numInPage
-            const end = this.currentPage * this.numInPage
-            const showData = this.allData.slice(start, end)
-            const deviceIDs = showData.map((item) => {
-                return item.clientId;
-            })
-            const deviceDataNums = showData.map((item) => {
-                return item.info;
-            })
+            var start = (this.currentPage - 1) * this.numInPage
+            var end = this.currentPage * this.numInPage
+            var showIds = this.deviceIds.slice(start, end)
+            var showDatas = this.deviceDataNums.slice(start, end)
             // 在update阶段，图表的option只需要更新data部分，包括数据的配置项
             const dataOption = {
                 xAxis: {
-                    data: deviceIDs
+                    data: showIds
                 },
                 series: [
                     {
-                        data: deviceDataNums // 数据
+                        data: showDatas // 数据
                     }
                 ]
             }

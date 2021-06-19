@@ -16,7 +16,6 @@
     <div class="screen-body">
       <section class="screen-left">
         <div id="left-top" :class="[status.dataInfo ? 'fullScreen' : '']">
-          <!-- 销量趋势图表 -->
           <DataInfo ref="dataInfo"></DataInfo>
           <div class="resize">
             <i
@@ -25,16 +24,18 @@
             ></i>
           </div>
         </div>
-        <div id="left-bottom">
-          <!-- 商家销售金额图表 -->
+        <div id="left-bottom" :class="[status.totalDataInfo ? 'fullScreen' : '']">
+            <TotalDataInfo ref="totalDataInfo"></TotalDataInfo>
           <div class="resize">
-            <i class="el-icon-copy-document"></i>
+            <i 
+              @click="changeSize('totalDataInfo')"
+              class="el-icon-copy-document">
+            </i>
           </div>
         </div>
       </section>
       <section class="screen-middle">
         <div id="middle-top" :class="[status.trackMap ? 'fullScreen' : '']">
-          <!-- 商家分布图表 -->
           <TrackMap ref="trackMap"></TrackMap>
           <div class="resize">
             <i
@@ -43,25 +44,7 @@
             ></i>
           </div>
         </div>
-        <div id="middle-bottom">
-          <!-- 地区销量排行图表 -->
-          <div class="resize">
-            <i class="el-icon-copy-document"></i>
-          </div>
-        </div>
-      </section>
-      <section class="screen-right">
-        <div id="right-top">
-          <!-- 热销商品占比图表 -->
-          <div class="resize">
-            <i class="el-icon-copy-document"></i>
-          </div>
-        </div>
-        <div
-          id="right-bottom"
-          :class="[status.onlineStatus ? 'fullScreen' : '']"
-        >
-          <!-- 库存销量分析图表 -->
+        <div id="middle-bottom" :class="[status.onlineStatus ? 'fullScreen' : '']">
           <OnlineStatus ref="onlineStatus"></OnlineStatus>
           <div class="resize">
             <i
@@ -71,12 +54,25 @@
           </div>
         </div>
       </section>
+      <section class="screen-right">
+        <div id="right-top">
+          <div class="resize">
+            <i class="el-icon-copy-document"></i>
+          </div>
+        </div>
+        <div id="right-bottom">
+          <div class="resize">
+            <i class="el-icon-copy-document"></i>
+          </div>
+        </div>
+      </section>
     </div>
   </div>
 </template>
 
 <script>
 import DataInfo from "@/components/DataInfo";
+import TotalDataInfo from '@/components/TotalDataInfo'
 import OnlineStatus from "@/components/OnlineStatus";
 import TrackMap from "@/components/TrackMap";
 export default {
@@ -85,6 +81,7 @@ export default {
       // 每个图表全局状态的定义
       status: {
         dataInfo: false,
+        totalDataInfo: false,
         onlineStatus: false,
         trackMap: false,
       },
@@ -104,6 +101,7 @@ export default {
   },
   components: {
     DataInfo,
+    TotalDataInfo,
     OnlineStatus,
     TrackMap,
   },

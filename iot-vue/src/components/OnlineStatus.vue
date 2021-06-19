@@ -9,7 +9,7 @@ export default {
     data() {
         return {
             chartInstance: null,
-            allData: [],
+            onlineDeviceNum: [], // 在线的设备数
             showNums: 20, // 显示近20s的设备在线信息
             timerId: null
         }
@@ -79,10 +79,12 @@ export default {
             }, 1000)
         },
         async getData() {
-            const {data: ret} = await this.$http.get('online-status')
-            this.allData.push(ret)
-            if (this.allData.length > this.showNums) {
-                this.allData.shift()
+            // 获取在线设备的id
+            const {data: ret} = await this.$http.get('online-device-ids')
+            // 将在线设备数塞入数组中
+            this.onlineDeviceNum.push(ret.length)
+            if (this.onlineDeviceNum.length > this.showNums) {
+                this.onlineDeviceNum.shift()
             }
             this.updateChart()
         },
@@ -92,14 +94,14 @@ export default {
             for (var i = 1; i <= this.showNums; i++) {
                 time.push('last ' + (this.showNums - i) + ' s')
             }
-            console.log(this.allData)
+            // console.log(this.onlineDeviceNum)
             const dataOption = {
                 xAxis: {
                     data: time
                 },
                 series: [
                     {
-                        data: this.allData
+                        data: this.onlineDeviceNum
                     }
                 ]
             }
