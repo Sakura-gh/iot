@@ -101,7 +101,7 @@ export default {
                 // console.log(msg)
                 locations.push({
                     name: this.deviceIds[i],
-                    value: [msg.lng, msg.lat]
+                    value: [msg.lng, msg.lat, msg.alert],
                 })
                 this.centerX += msg.lng
                 this.centerY += msg.lat
@@ -128,7 +128,14 @@ export default {
                         symbolSize: 20,
                         itemStyle: {
                             normal: {
-                                "color": "#B34038"
+                                color: function(point) {
+                                    // console.log(point.value)
+                                    if (point.value[2] == 0) {
+                                        return '#7EF94C'
+                                    } else if (point.value[2] == 1) {
+                                        return '#B34038'
+                                    }
+                                }
                             }
                         },
                         rippleEffect: {
@@ -209,13 +216,13 @@ export default {
                 if (i == 0) {
                     pointData.push({
                         name: i,
-                        value: [msg[i].lng, msg[i].lat]
+                        value: [msg[i].lng, msg[i].lat, msg[i].alert]
                     })
                 }
                 pointData.push({
                     // name是显示的标签
                     name: i + 1,
-                    value: [msg[i + 1].lng, msg[i + 1].lat]
+                    value: [msg[i + 1].lng, msg[i + 1].lat, msg[i + 1].alert]
                 })
                 this.centerX += msg[i].lng
                 this.centerY += msg[i].lat
@@ -280,7 +287,14 @@ export default {
                         symbolSize : 10,
                         itemStyle:{
                             normal:{
-                                "color": "#7EF94C"
+                                color: function(point) {
+                                    // console.log(point.value)
+                                    if (point.value[2] == 0) {
+                                        return '#7EF94C'
+                                    } else if (point.value[2] == 1) {
+                                        return '#B34038'
+                                    }
+                                }
                             },
                         },
                         label: {
