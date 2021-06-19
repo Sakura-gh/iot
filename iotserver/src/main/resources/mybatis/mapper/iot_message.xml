@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gehao.iotserver.dal.mapper.IotMessageMapper">
+    <sql id="SELECT_COLS">
+        client_id clientId,
+        info,
+        value,
+        alert,
+        lng,
+        lat,
+        timestamp
+    </sql>
+
+    <delete id="deleteAll">
+        delete from iot_message
+    </delete>
+
+
+    <insert id="insert" parameterType="com.gehao.iotserver.dal.dataobject.IotMessageDO">
+        insert into iot_message(
+            client_id,
+            info,
+            value,
+            alert,
+            lng,
+            lat,
+            timestamp
+        ) values (
+            #{clientId},
+            #{info},
+            #{value},
+            #{alert},
+            #{lng},
+            #{lat},
+            #{timestamp}
+        )
+    </insert>
+
+    <select id="getById" resultType="com.gehao.iotserver.dal.dataobject.IotMessageDO">
+        select
+            <include refid="SELECT_COLS" />
+        from
+            iot_message
+        where
+            client_id = #{id}
+    </select>
+
+    <select id="getByIdLimits" resultType="com.gehao.iotserver.dal.dataobject.IotMessageDO">
+        select
+            <include refid="SELECT_COLS" />
+        from
+            iot_message
+        where
+            client_id = #{id}
+        order by
+            timestamp desc
+        limit
+            #{num}
+    </select>
+
+    <select id="getIds" resultType="java.lang.String">
+        select
+            distinct client_id
+        from
+            iot_message
+    </select>
+
+    <select id="getTotalNum" resultType="java.lang.Long">
+        select
+            count(*)
+        from
+            iot_message
+    </select>
+
+</mapper>
