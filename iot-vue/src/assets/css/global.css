@@ -25,3 +25,6 @@ body,
 canvas {
   border-radius: 20px;
 }
+.com-container {
+  position: relative;
+}
