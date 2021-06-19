@@ -445,4 +445,33 @@ Publishing message: {
     }
     ~~~
 
+-   百度地图bmap api使用文档：https://malagis.com/baidu-map-api-custom-style-map.html
+
+-   画轨迹：https://blog.csdn.net/weixin_42429220/article/details/109495713
+
+-   echarts的option是merge方式，不会删除原先的旧点：https://github.com/apache/echarts/issues/3976
+
+从单设备轨迹切换回多设备位置时，单设备对应的点并没有被移除，因为setOption本身默认是做merge，会保留原先的点，为了解决这个问题，有两种思路：
+
+-   清空原chart，重新绘制：重载资源太浪费了
+
+    ~~~js
+    // 重置echarts，性能低，但目前官方并没有提供更好的方案
+    resetEcharts() {
+        // console.log(this.chartInstance.getOption())
+        this.chartInstance.clear()
+        this.chartInstance.setOption({bmap:{}})
     
+        this.bmap = this.chartInstance.getModel().getComponent('bmap').getBMap()     
+        this.bmap.addControl(new BMap.ScaleControl({anchor: BMAP_ANCHOR_BOTTOM_LEFT})) // 地图左下角显示比例尺
+        this.bmap.setMapStyleV2({styleId: '8394c7f10d2cb459727e8c39ba0a3650'})
+    }
+    ~~~
+
+-   setOption时删除旧的部分组件，做属性的替换而不是合并：https://echarts.apache.org/zh/api.html#echartsInstance.setOption，参考replaceMerge参数，但存在一些bug，参考我提的issue：https://github.com/apache/echarts/issues/15186
+
+    ~~~js
+    this.chartInstance.setOption(dataOption, {replaceMerge: 'series'})
+    ~~~
+
+    发现可能是原先我的echarts4.9.0版本不支持replaceMerge特性，需要升级到echarts5
