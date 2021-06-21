@@ -1,6 +1,7 @@
 <template>
   <div class="screen-container">
     <header class="screen-header">
+      <div><MenuBar class="menu"></MenuBar></div>
       <div>
         <span class="title-left">author: gehao</span>
       </div>
@@ -89,6 +90,7 @@ import ValueInfo from "@/components/ValueInfo";
 import ValueInfo2 from "@/components/ValueInfo2";
 import OnlineStatus from "@/components/OnlineStatus";
 import TrackMap from "@/components/TrackMap";
+import MenuBar from "@/components/MenuBar";
 
 export default {
   data() {
@@ -149,6 +151,7 @@ export default {
     ValueInfo2,
     OnlineStatus,
     TrackMap,
+    MenuBar,
   },
 };
 </script>
@@ -188,12 +191,19 @@ export default {
     font-size: 20px;
     transform: translate(-50%, -50%);
   }
+  .menu {
+    display: flex;
+    position: absolute;
+    left: 0%;
+    top: 10%;
+  }
   .title-left {
     display: flex;
     align-items: center;
     position: absolute;
-    left: 0px;
+    left: 5%;
     top: 50%;
+    font-size: 15px;
     transform: translateY(-80%);
   }
   .title-right {
