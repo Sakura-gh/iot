@@ -3,10 +3,17 @@
     <el-container>
       <MenuBar></MenuBar>
       <el-header>
-        <div style="text-align: center; font-size: 25px">
+        <div
+          style="
+            text-align: center;
+            font-size: 25px;
+            color: white;
+            font-weight: bold;
+          "
+        >
           <span>设备数据查询</span>
         </div>
-        <div style="text-align: center; top: 30px">
+        <div style="text-align: center; top: 30px; color: white">
           <span>关键词查询：</span>
           <el-input
             placeholder="请输入关键字"
@@ -18,87 +25,93 @@
         </div>
       </el-header>
       <el-main style="margin-top: 30px">
-        <el-table
-          :data="pageData"
-          style="width: 78%; margin: auto"
-          :height="tableHeight"
-          border
-          stripe
-          @sort-change="sortByColumn"
-        >
-          <el-table-column
-            type="index"
-            align="center"
-            :index="getIndex"
-          ></el-table-column>
-          <el-table-column
-            prop="clientId"
-            label="设备ID"
-            width="120"
-            align="center"
-            sortable="custom"
+        <!-- 外层套一张卡片 -->
+        <el-card style="width: 90%; padding: 3px 0; margin: auto; opacity: 0.6">
+          <el-table
+            :data="pageData"
+            style="width: 90%; margin: auto"
+            :height="tableHeight"
+            stripe
+            @sort-change="sortByColumn"
+            class="table"
           >
-          </el-table-column>
-          <el-table-column
-            prop="info"
-            label="上报信息"
-            width="300"
-            align="center"
-            sortable
-          >
-          </el-table-column>
-          <el-table-column
-            prop="value"
-            label="设备数据"
-            width="120"
-            align="center"
-            sortable
-          >
-          </el-table-column>
-          <el-table-column
-            prop="alert"
-            label="告警状态"
-            width="120"
-            align="center"
-            sortable
-          >
-          </el-table-column>
-          <el-table-column
-            prop="lng"
-            label="经度"
-            width="120"
-            align="center"
-            sortable
-          >
-          </el-table-column>
-          <el-table-column
-            prop="lat"
-            label="维度"
-            width="120"
-            align="center"
-            sortable
-          >
-          </el-table-column>
-          <el-table-column
-            prop="timestamp"
-            label="上报时间"
-            width="150"
-            align="center"
-            sortable
-          >
-          </el-table-column>
-        </el-table>
+            <el-table-column
+              type="index"
+              align="center"
+              :index="getIndex"
+            ></el-table-column>
+            <el-table-column
+              prop="clientId"
+              label="设备ID"
+              width="120"
+              align="center"
+              sortable="custom"
+            >
+            </el-table-column>
+            <el-table-column
+              prop="info"
+              label="上报信息"
+              width="300"
+              align="center"
+              sortable
+            >
+            </el-table-column>
+            <el-table-column
+              prop="value"
+              label="设备数据"
+              width="120"
+              align="center"
+              sortable
+            >
+            </el-table-column>
+            <el-table-column
+              prop="alert"
+              label="告警状态"
+              width="120"
+              align="center"
+              sortable
+            >
+            </el-table-column>
+            <el-table-column
+              prop="lng"
+              label="经度"
+              width="120"
+              align="center"
+              sortable
+            >
+            </el-table-column>
+            <el-table-column
+              prop="lat"
+              label="维度"
+              width="120"
+              align="center"
+              sortable
+            >
+            </el-table-column>
+            <el-table-column
+              prop="timestamp"
+              label="上报时间"
+              width="150"
+              align="center"
+              sortable
+            >
+            </el-table-column>
+          </el-table>
+        </el-card>
       </el-main>
       <el-footer style="margin: auto">
-        <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="currentPage"
-          :page-size="pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="total"
-        >
-        </el-pagination>
+        <el-card style="opacity: 0.8">
+          <el-pagination
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page="currentPage"
+            :page-size="pageSize"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="total"
+            style="background-color: white"
+          >
+          </el-pagination>
+        </el-card>
       </el-footer>
     </el-container>
   </div>
@@ -116,13 +129,13 @@ export default {
       pageSize: 10,
       total: null,
       keyword: null,
-      tableHeight: 0,
+      tableHeight: 520,
     };
   },
   mounted() {
     this.getData();
-    window.addEventListener("resize", this.screenAdapter); // 表格高度自适应
     this.screenAdapter(); // 初始化还要设置一次表格高度
+    window.addEventListener("resize", this.screenAdapter); // 表格高度自适应
   },
   methods: {
     init() {},
@@ -185,7 +198,7 @@ export default {
       this.flushPageData();
     },
     screenAdapter() {
-      this.tableHeight = window.innerHeight - 250;
+      this.tableHeight = window.innerHeight - 270;
       // console.log(this.tableHeight);
     },
   },
@@ -197,7 +210,7 @@ export default {
 
 <style lang="css">
 .query {
-  /* background-image: url("../assets/img/bg.jpg"); */
+  background-image: url("../assets/img/bg.png");
   /* color: #222733; */
 }
 </style>
