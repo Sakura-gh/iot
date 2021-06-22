@@ -66,7 +66,7 @@
           <i class="el-icon-search"></i>
           <span slot="title">设备数据查询界面</span>
         </el-menu-item>
-        <el-menu-item index="3">
+        <el-menu-item index="/config">
           <i class="el-icon-setting"></i>
           <span slot="title">设备信息配置界面</span>
         </el-menu-item>

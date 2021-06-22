@@ -8,18 +8,29 @@ import OnlineStatusPage from '@/components/OnlineStatusPage'
 import TrackMapPage from '@/components/TrackMapPage'
 import ScreenPage from '@/components/ScreenPage'
 import QueryView from '@/components/QueryView'
+import ConfigView from '@/components/ConfigView'
+import Login from '@/components/Login'
 
 Vue.use(Router)
 
 export default new Router({
+    mode: 'history',
     routes: [
         {
             path: '/',
-            redirect: '/screen'
+            redirect: '/login'
+        },
+        {
+            path: '/login',
+            component: Login
         },
         {
             path: '/query',
             component: QueryView
+        },
+        {
+            path: '/config',
+            component: ConfigView
         },
         {
             path: '/screen',
