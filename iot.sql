@@ -8,3 +8,10 @@ create table if not exists iot_message (
 	timestamp		bigint,
 	primary key(client_id, timestamp)
 );
+
+create table if not exists user (
+	username		varchar(32),
+	password		varchar(32),
+	email			varchar(64),
+	primary key(username)
+);
