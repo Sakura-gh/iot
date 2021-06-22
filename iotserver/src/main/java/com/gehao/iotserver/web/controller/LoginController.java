@@ -1,29 +1,37 @@
 package com.gehao.iotserver.web.controller;
 
-import javax.servlet.http.HttpSession;
-
-import com.gehao.iotserver.biz.bo.Result;
-import com.gehao.iotserver.biz.service.impl.LoginServiceImpl;
-import com.gehao.iotserver.dal.dataobject.UserDO;
+import com.gehao.iotserver.biz.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @author gehao
  */
-@Controller
+@RestController
 public class LoginController {
     @Autowired
-    LoginServiceImpl loginService;
+    LoginService loginService;
 
-    @CrossOrigin
-    @PostMapping(value = "/api/login")
-    @ResponseBody
-    public Result login(@RequestBody UserDO requestUser, HttpSession session) {
-        return loginService.login(requestUser, session);
+    @GetMapping("login")
+    public Boolean login(@RequestParam("username") String username, @RequestParam("password") String password) {
+        return loginService.login(username, password);
+    }
+
+    @GetMapping("check-username")
+    public Boolean checkUsername(@RequestParam("username") String username) {
+        return loginService.checkUsername(username);
+    }
+
+    @GetMapping("check-email")
+    public Boolean checkEmail(@RequestParam("email") String email) {
+        return loginService.checkEmail(email);
+    }
+
+    @GetMapping("register")
+    public Boolean register(@RequestParam("username") String username, @RequestParam("password") String password,
+        @RequestParam("email") String email) {
+        return loginService.register(username, password, email);
     }
 }

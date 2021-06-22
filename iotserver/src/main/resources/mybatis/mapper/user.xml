@@ -4,11 +4,22 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.gehao.iotserver.dal.mapper.UserMapper">
     <sql id="SELECT_COLS">
-        id id,
         username username,
-        password password
+        password password,
+        email email
     </sql>
 
+    <insert id="insert" parameterType="com.gehao.iotserver.dal.dataobject.UserDO">
+        insert into user (
+            username,
+            password,
+            email
+        ) values (
+            #{username},
+            #{password},
+            #{email}
+        )
+    </insert>
 
     <select id="getByName" resultType="com.gehao.iotserver.dal.dataobject.UserDO">
         select
@@ -16,6 +27,15 @@
         from
             user
         where
-            username = #{name}
+            username = #{username}
+    </select>
+
+    <select id="getByEmail" resultType="com.gehao.iotserver.dal.dataobject.UserDO">
+        select
+            <include refid="SELECT_COLS" />
+        from
+            user
+        where
+            email = #{email}
     </select>
 </mapper>

@@ -11,9 +11,32 @@ import com.gehao.iotserver.dal.dataobject.UserDO;
 public interface LoginService {
     /**
      * 登录功能
-     *
-     * @param requestUser
+     * @param username
+     * @param password
      * @return
      */
-    Result login(UserDO requestUser, HttpSession session);
+    Boolean login(String username, String password);
+
+    /**
+     * 校验用户名
+     * @param username
+     * @return
+     */
+    Boolean checkUsername(String username);
+
+    /**
+     * 校验邮箱
+     * @param email
+     * @return
+     */
+    Boolean checkEmail(String email);
+
+    /**
+     * 注册新账户
+     * @param username
+     * @param password
+     * @param email
+     * @return
+     */
+    Boolean register(String username, String password, String email);
 }
