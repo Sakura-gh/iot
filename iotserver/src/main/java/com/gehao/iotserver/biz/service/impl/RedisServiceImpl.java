@@ -1,14 +1,18 @@
 package com.gehao.iotserver.biz.service.impl;
 
+import java.util.concurrent.TimeUnit;
+
 import com.gehao.iotserver.biz.service.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
 /**
  * @author gehao
  * @date 2021/6/16
  */
+@Service
 public class RedisServiceImpl implements RedisService {
     @Autowired
     private StringRedisTemplate redisTemplate;
@@ -55,7 +59,7 @@ public class RedisServiceImpl implements RedisService {
         try {
             // cache key md5加密，避免key长度过大
             key = DigestUtils.md5DigestAsHex(key.getBytes());
-            redisTemplate.opsForValue().set(key, value, expireTime);
+            redisTemplate.opsForValue().set(key, value, expireTime, TimeUnit.SECONDS);
             return true;
         } catch (Exception e) {
             System.out.println("redis put error!");
