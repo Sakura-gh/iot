@@ -57,8 +57,8 @@ export default {
     var checkUsername = async (rule, value, callback) => {
       if (value === "") {
         callback(new Error("请输入用户名"));
-      } else if (value.length <= 6) {
-        callback(new Error("用户名长度必须大于6"));
+      } else if (value.length <= 3) {
+        callback(new Error("用户名长度必须大于3"));
       } else {
         var { data: exist } = await this.$http.get("check-username", {
           params: {
@@ -142,11 +142,8 @@ export default {
               email: this.ruleForm.email,
             },
           });
-          if (ret) {
-            alert("注册成功！");
-          } else {
-            alert("注册失败！");
-          }
+          alert("注册成功！");
+          this.$router.replace("/login");
         } else {
           console.log("error submit!!");
           return false;
@@ -168,7 +165,7 @@ export default {
   background-image: url("../assets/img/bg.png");
 }
 .top {
-  height: 25%;
+  height: 20%;
 }
 .card {
   opacity: 0.7;
@@ -180,7 +177,7 @@ export default {
   box-shadow: 0 0 25px #cac6c6;
 
   width: 500px;
-  height: 500px;
+  height: 450px;
   margin: auto;
   text-align: center;
 }
