@@ -74,4 +74,34 @@
             iot_message
     </select>
 
+    <select id="getNumById" resultType="java.lang.Long">
+        select
+            count(*)
+        from
+            iot_message
+        where
+            client_id = #{id}
+    </select>
+
+    <select id="getValueById" resultType="java.lang.Integer">
+        select
+            value
+        from
+            iot_message
+        where
+            client_id = #{id}
+        limit 1
+    </select>
+
+    <select id="getByKeyword" resultType="com.gehao.iotserver.dal.dataobject.IotMessageDO">
+        select
+            <include refid="SELECT_COLS" />
+        from
+            iot_message
+        where
+            concat(client_id, info, value, alert, lng, lat, timestamp) like concat('%', #{keyword}, '%')
+        order by
+            timestamp desc
+    </select>
+
 </mapper>

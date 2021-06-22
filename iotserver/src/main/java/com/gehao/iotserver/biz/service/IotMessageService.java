@@ -22,6 +22,13 @@ public interface IotMessageService {
     Long getMessageTotalNum();
 
     /**
+     * 获取id对应设备的数据总数
+     * @param id
+     * @return
+     */
+    Long getMessageNumById(String id);
+
+    /**
      * 获取当前数据库中所有设备的device id
      * @return
      */
@@ -49,8 +56,15 @@ public interface IotMessageService {
     List<IotMessageDO> getMessagesByIdAndNum(String id, Integer num);
 
     /**
-     * 获取最新的一组数据(含所有iot devices)
+     * 获取该id对应设备最新的value值
+     * @param id
      * @return
      */
-    List<Map<String, IotMessageDO>> getLatestMessages();
+    Integer getValueById(String id);
+
+    /**
+     * 获取keyword相关的所有数据(按时间排序)
+     * @return
+     */
+    List<IotMessageDO> getDataByKeyword(String keyword);
 }

@@ -19,6 +19,13 @@ public interface IotMessageMapper extends BaseMapper<IotMessageDO> {
     Long getTotalNum();
 
     /**
+     * 或者id对应设备的记录总数
+     * @param id
+     * @return
+     */
+    Long getNumById(@Param("id") String id);
+
+    /**
      * 获取当前数据库中所有设备的device id
      * @return
      */
@@ -37,6 +44,20 @@ public interface IotMessageMapper extends BaseMapper<IotMessageDO> {
      * @return
      */
     List<IotMessageDO> getByIdLimits(@Param("id") String id, @Param("num") Integer num);
+
+    /**
+     * 获取该id设备最新的value值
+     * @param id
+     * @return
+     */
+    Integer getValueById(@Param("id") String id);
+
+    /**
+     * 获取keyword相关的所有记录(按时间排序)
+     * @param keyword
+     * @return
+     */
+    List<IotMessageDO> getByKeyword(@Param("keyword") String keyword);
 
     /**
      * 用于初始化时清除数据库中原有的所有记录

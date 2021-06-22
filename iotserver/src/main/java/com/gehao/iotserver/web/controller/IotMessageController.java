@@ -6,6 +6,7 @@ import com.gehao.iotserver.biz.service.IotMessageService;
 import com.gehao.iotserver.dal.dataobject.IotMessageDO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -27,6 +28,16 @@ public class IotMessageController {
     }
 
     /**
+     * 获取id对应设备的数据总量
+     * @param id
+     * @return
+     */
+    @GetMapping("message-num-by-id")
+    public Long messageNumById(String id) {
+        return iotMessageService.getMessageNumById(id);
+    }
+
+    /**
      * 获取当前数据库中所有设备的device id
      * @return
      */
@@ -35,7 +46,12 @@ public class IotMessageController {
         return iotMessageService.getDeviceIds();
     }
 
-    @GetMapping("online-device-id")
+    /**
+     * 获取在线设备的device id
+     * 在线判定规则：缓存有效时间内存在
+     * @return
+     */
+    @GetMapping("online-device-ids")
     public List<String> onlineDeviceIds() {
         return iotMessageService.getOnlineDeviceIds();
     }
@@ -59,5 +75,24 @@ public class IotMessageController {
     @GetMapping("messages-by-id-num")
     public List<IotMessageDO> messagesByIdAndNum(String id, Integer num) {
         return iotMessageService.getMessagesByIdAndNum(id, num);
+    }
+
+    /**
+     * 获取该id设备最新的value值
+     * @param id
+     * @return
+     */
+    @GetMapping("value-by-id")
+    public Integer valueById(String id) {
+        return iotMessageService.getValueById(id);
+    }
+
+    /**
+     * 获取所有数据(按时间排序)
+     * @return
+     */
+    @GetMapping("data-by-keyword")
+    public List<IotMessageDO> dataByKeyword(@RequestParam(name = "keyword", required = false) String keyword) {
+        return iotMessageService.getDataByKeyword(keyword);
     }
 }
