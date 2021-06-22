@@ -10,6 +10,7 @@ import ScreenPage from '@/components/ScreenPage'
 import QueryView from '@/components/QueryView'
 import ConfigView from '@/components/ConfigView'
 import Login from '@/components/Login'
+import Resgiter from '@/components/Register'
 import Index from '@/components/Index'
 
 Vue.use(Router)
@@ -24,6 +25,10 @@ export default new Router({
         {
             path: '/login',
             component: Login
+        },
+        {
+            path: '/register',
+            component: Resgiter
         },
         {
             path: '/index',

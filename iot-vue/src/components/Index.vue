@@ -58,8 +58,4 @@ export default {
   width: 100px;
   margin: 10px auto;
 }
-.menu {
-  /* width: 20px;
-  margin: 20px auto; */
-}
 </style>

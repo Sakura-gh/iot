@@ -4,23 +4,34 @@
     <el-card class="card" shadow="always">
       <h3 class="title">IoT系统登录</h3>
       <el-row>
-        <el-input
-          placeholder="用户名"
-          style="margin: 10px auto; width: 80%"
-          v-model="username"
-        ></el-input>
-        <el-input
-          placeholder="密码"
-          style="margin: 10px auto; width: 80%"
-          v-model="password"
-        ></el-input>
-        <el-button
-          type="danger"
-          style="margin: 10px auto; width: 60%"
-          @click="login"
-        >
-          登录
-        </el-button>
+        <el-col>
+          <el-input
+            placeholder="用户名"
+            style="margin: 10px auto; width: 80%"
+            v-model="username"
+          ></el-input>
+        </el-col>
+        <el-col>
+          <el-input
+            placeholder="密码"
+            style="margin: 10px auto; width: 80%"
+            v-model="password"
+          ></el-input>
+        </el-col>
+        <el-col>
+          <router-link to="/register" class="register">
+            没有账号? 点击注册
+          </router-link>
+        </el-col>
+        <el-col>
+          <el-button
+            type="danger"
+            style="margin: 10px auto; width: 60%"
+            @click="login"
+          >
+            登录
+          </el-button>
+        </el-col>
       </el-row>
     </el-card>
   </div>
@@ -89,5 +100,8 @@ export default {
   height: 300px;
   margin: auto;
   text-align: center;
+}
+.register {
+  font-size: 10px;
 }
 </style>
