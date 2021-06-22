@@ -15,17 +15,11 @@
         @open="handleOpen"
         @close="handleClose"
       >
-        <el-submenu index="1">
+        <!-- <el-submenu index="1">
           <template slot="title">
             <i class="el-icon-s-data"></i>
             <span>IOT可视化界面</span>
           </template>
-          <!-- <el-submenu index="1-0">
-            <template slot="title">
-              <i class="el-icon-bell"></i>
-              <span>主界面</span>
-            </template>
-          </el-submenu> -->
           <el-menu-item index="/screen">
             <i class="el-icon-s-platform"></i>
             <span>可视化主界面</span>
@@ -61,7 +55,15 @@
             </template>
             <el-menu-item index="/onlinestatus">设备在线数量</el-menu-item>
           </el-submenu>
-        </el-submenu>
+        </el-submenu> -->
+        <el-menu-item index="/index">
+          <i class="el-icon-s-home"></i>
+          <span slot="title">IoT物联网系统首页</span>
+        </el-menu-item>
+        <el-menu-item index="/screen">
+          <i class="el-icon-s-data"></i>
+          <span slot="title">IoT数据可视化界面</span>
+        </el-menu-item>
         <el-menu-item index="/query">
           <i class="el-icon-search"></i>
           <span slot="title">设备数据查询界面</span>
@@ -69,10 +71,6 @@
         <el-menu-item index="/config">
           <i class="el-icon-setting"></i>
           <span slot="title">设备信息配置界面</span>
-        </el-menu-item>
-        <el-menu-item index="4">
-          <i class="el-icon-user"></i>
-          <span slot="title">登录注册界面</span>
         </el-menu-item>
       </el-menu>
     </el-drawer>
@@ -107,6 +105,7 @@ export default {
   /* 这个背景图的效果是：当点击按钮弹出drawer时，整个页面都会显示该图片，
   原先的表格啥的都隐藏，只有drawer再次被隐藏时，其余内容才会被正常显示*/
   background-image: url("../assets/img/bg.png");
+  text-align: left; /* 导航文字均靠左显示，避免外层的text-aligin属性修改导致menuBar文字显示效果发生变化 */
 }
 .el-button--menu.is-active,
 .el-button--menu:active {
@@ -126,6 +125,8 @@ export default {
   color: #fff;
   background-color: #81e0dc;
   border-color: #81e0dc;
+  border: 1px solid #81e0dc; /* 加上边框和阴影 */
+  box-shadow: 0 0 15px #81e0dc; /* 加上边框和阴影 */
 }
 .group {
   font-size: 15px;

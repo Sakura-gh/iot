@@ -7,12 +7,18 @@
         <el-input
           placeholder="用户名"
           style="margin: 10px auto; width: 80%"
+          v-model="username"
         ></el-input>
         <el-input
           placeholder="密码"
           style="margin: 10px auto; width: 80%"
+          v-model="password"
         ></el-input>
-        <el-button type="danger" style="margin: 10px auto; width: 60%">
+        <el-button
+          type="danger"
+          style="margin: 10px auto; width: 60%"
+          @click="login"
+        >
           登录
         </el-button>
       </el-row>
@@ -21,7 +27,43 @@
 </template>
 
 <script>
-export default {};
+export default {
+  data() {
+    return {
+      username: null,
+      password: null,
+    };
+  },
+  methods: {
+    async login() {
+      console.log(this.$store.state);
+      var { data: response } = await this.$http.get("login", {
+        params: {
+          username: this.username,
+          password: this.password,
+        },
+      });
+      // 后端验证成功，返回true
+      if (response) {
+        var user = {
+          username: this.username,
+          password: this.password,
+        };
+        // 触发store中的login()方法，把user对象传递给store中的user对象
+        this.$store.commit("login", user);
+        // 获取登录前的页面路径并跳转，如果该路径不存在，就跳转到首页
+        var path = this.$route.query.redirect;
+        this.$router.replace({
+          path: path == "/" || path == undefined ? "/index" : path,
+        });
+      }
+      // 后端验证失败
+      else {
+        alert("账号或密码错误，请重试！");
+      }
+    },
+  },
+};
 </script>
 
 <style lang="css">
