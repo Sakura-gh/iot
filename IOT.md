@@ -475,3 +475,66 @@ Publishing message: {
     ~~~
 
     发现可能是原先我的echarts4.9.0版本不支持replaceMerge特性，需要升级到echarts5
+
+redis需要先本地安装，然后在properties中设置：
+
+~~~
+# Redis数据库索引（默认为0）
+spring.redis.database=0
+# Redis服务器地址
+spring.redis.host=127.0.0.1
+# Redis服务器连接端口
+spring.redis.port=6379
+# Redis服务器连接密码（默认为空）
+spring.redis.password=
+# 连接池最大连接数（使用负值表示没有限制）
+spring.redis.jedis.pool.max-active=20
+# 连接池最大阻塞等待时间（使用负值表示没有限制）
+spring.redis.jedis.pool.max-wait=-1
+# 连接池中的最大空闲连接
+spring.redis.jedis.pool.max-idle=10
+# 连接池中的最小空闲连接
+spring.redis.jedis.pool.min-idle=0
+# 连接超时时间（毫秒）
+spring.redis.timeout=1000
+~~~
+
+设置缓存过期时间：第四个参数别忘了
+
+~~~java
+redisTemplate.opsForValue().set(key, value, expireTime, TimeUnit.SECONDS);
+~~~
+
+redis存的数据不会在重启后自动被清空，需要手动清空：
+
+~~~redis
+flushall
+flushdb
+~~~
+
+页面规划：
+
+-   轨迹地图：trackMap 地图√ -- middle-top
+    -   device-ids：获取所有设备id
+    -   messages-by-id-num：获取这些id的最近num条msgs，并提取出经纬度，用于绘制位置和轨迹
+-   设备在线情况：onlineStatus 折线图 -- modile-buttom
+    -   online-device-ids：获取所有在线的设备id，统计数量，用于折线图显示
+-   每台设备接收的数据量：dataInfo 柱状图 -- left-top
+    -   device-ids：获取所有设备id
+    -   message-num-by-id：遍历id，分别得到其对应的数据量，用于柱状图显示
+-   总接收的数据量：totalDataInfo 折线图 -- left-bottom
+    -   message-total-num：获取总数据量，用于折线图显示
+-   每台设备value值的变化：valueInfo 柱状图 -- right-top
+    -   device-ids：获取所有设备id
+    -   value-by-id：获取每台设备对应的value，用于柱状图显示
+-   每台设备value值的变化：valueInfo 多折线图 -- right-bottom
+    -   device-ids：获取所有设备id
+    -   value-by-id：获取每台设备对应的value，用于折线图显示
+
+动态主题：https://cloud.tencent.com/developer/article/1498631
+
+响应式导航：https://element.eleme.cn/#/zh-CN/component/drawer、https://element.eleme.cn/#/zh-CN/component/menu
+
+table自适应：https://blog.csdn.net/fairyier/article/details/99858880
+
+前端实现登录拦截：https://learner.blog.csdn.net/article/details/89422585
