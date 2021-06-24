@@ -57,6 +57,7 @@ public class MqttServer {
             subscribe();
         } catch (Exception e) {
             System.out.println("connect to broker error!");
+            e.printStackTrace();
         }
     }
 
