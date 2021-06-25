@@ -1,0 +1,49 @@
+version: "3"
+
+services:
+  web:
+    build: ./server # Dockerfile文件路径, 注意是目录名, 而不是文件名
+    container_name: iot_server # 容器名
+    restart: always
+    depends_on:
+      - emqx
+      - mysql
+      - redis
+    ports:
+      - "8443:8443"
+
+  emqx:
+    image: emqx/emqx:v4.0.0
+    container_name: iot_emqx
+    restart: always
+    ports:
+    - "1883:1883"
+    - "18083:18083"
+    - "8883:8883"
+    - "8083:8083"
+    - "8084:8084"
+
+
+  mysql:
+    image: mysql:8.0.24 # mysql镜像版本
+    container_name: iot_mysql # 容器名
+    restart: always
+    volumes:
+      - ./mysql/init:/docker-entrypoint-initdb.d # 初始化建库建表操作
+      - ./mysql/data:/var/lib/mysql # 将MySQL容器中的/var/lib/mysql目录挂载到宿主机的目录./mysql/data上
+    environment:
+      MYSQL_ROOT_PASSWORD: "fuck1712824638"
+      MYSQL_USER: "gehao"
+      MYSQL_PASS: "fuck1712824638"
+    ports:
+      - "3306:3306"
+
+  redis:
+    image: redis:6.2.1 # redis镜像版本
+    container_name: iot_redis # 容器名
+    restart: always
+    volumes:
+      - ./redis/data:/data # 将Redis容器中的/data目录挂载到宿主机的目录./redis/data上
+    command: redis-server
+    ports:
+      - "6379:6379"
