@@ -2,3 +2,4 @@
 *.idea*
 iot-vue/node_modules/*
 *.class
+*.swp
