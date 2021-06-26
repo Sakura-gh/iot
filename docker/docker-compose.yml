@@ -13,6 +13,15 @@ services:
     ports:
       - "8443:8443"
 
+  vue:
+    build: ./vue
+    container_name: iot_vue
+    restart: always
+    depends_on:
+      - server
+    ports:
+      - "8080:8080"
+
   client:
     build: ./client
     container_name: iot_client
