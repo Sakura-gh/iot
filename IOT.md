@@ -678,4 +678,12 @@ Docker:
 
 -   mysql8->5，到官网找5.7.30的dmg包傻瓜式安装，然后修改root密码为gehao，重新执行init.sql即可，springboot的配置参考http://cxyzjd.com/article/Aliux_JLQ/112346051
 
+-   **很坑很坑很坑**的地方：终于发现为啥mysql初始化目录挂载一直失败了，因为我是用idea的docker插件，在本地机器起远程的docker容器，按照docker-compose所说，就相当于是把本地的目录挂载到远程机器的docker容器内的目录下，显然这是不合理的，因此挂载结果始终只有目录却没有文件，远程主机的kernel它也没法访问本地的文件系统啊😭，最终只要在远程主机上直接跑docker compose，就好了，数据库表啥的都自动建好了
+
+    ~~~bash
+    docker-compose up -d
+    ~~~
+
+    
+
 一个很严重的问题：使用idea docker插件，如果本地对springboot的properties有修改但远程已经有了镜像，必须要将远程docker镜像删除之后配置才会生效
