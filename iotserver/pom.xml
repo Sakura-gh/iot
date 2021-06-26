@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.gehao</groupId>
 	<artifactId>iotserver</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>iotserver</name>
 	<description>IOT project for Spring Boot</description>
 	<packaging>jar</packaging>
@@ -121,7 +121,7 @@
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
-			<version>8.0.24</version>
+			<version>5.1.47</version>
 		</dependency>
 
 		<!-- junit -->

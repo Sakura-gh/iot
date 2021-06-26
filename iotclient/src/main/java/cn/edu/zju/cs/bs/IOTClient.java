@@ -7,7 +7,7 @@ import java.util.Vector;
 public class IOTClient {
     public static void main(String[] args) {
         int devices = 1;
-        String mqttServer = "tcp://localhost:1883";
+        String mqttServer = "tcp://emqx:1883";
         String topic = "testapp";
         String clientPrefix = "device";
 

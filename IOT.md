@@ -538,3 +538,144 @@ flushdb
 table自适应：https://blog.csdn.net/fairyier/article/details/99858880
 
 前端实现登录拦截：https://learner.blog.csdn.net/article/details/89422585
+
+
+
+Docker:
+
+-   服务端配置docker，开启远程安全访问：https://segmentfault.com/a/1190000023152196?utm_source=sf-similar-article
+
+    ~~~bash
+    sudo install docker.io
+    sudo vim /lib/systemd/system/docker.service
+    # 修改：ExecStart=/usr/bin/dockerd -H fd://  --containerd=/run/containerd/containerd.sock -H tcp://0.0.0.0:2375
+    
+    # 加载配置+重启docker
+    sudo systemctl daemon-reload
+    sudo systemctl restart docker
+    # 验证
+    curl http://127.0.0.1:2375
+    ~~~
+
+-   idea安装docker插件，配置tcp，显示连接成功
+
+    <img src="/Users/gehao/gh/courses/bs/iot/img/image-20210622234326943.png" alt="image-20210622234326943" style="zoom:50%;" />
+
+    下方弹出窗口，选中并连接
+
+    <img src="/Users/gehao/gh/courses/bs/iot/img/image-20210622234817822.png" alt="image-20210622234817822" style="zoom:50%;" />
+
+    连接上后显示Containers和Images就是我们现在Docker中已经有的容器和镜像
+
+-   配置：https://www.jb51.net/article/196708.htm、https://segmentfault.com/a/1190000022026960
+
+-   配置mysql、redis：docker-compose：https://www.cnblogs.com/Howinfun/p/11677222.html、https://cloud.tencent.com/developer/article/1594125
+
+-   运行compose.yml出错，说docker-compose路径出错
+
+    本地配置：
+
+    <img src="/Users/gehao/gh/courses/bs/iot/img/image-20210623133130508.png" alt="image-20210623133130508" style="zoom:50%;" />
+
+    这里的意思应该是要本地装一个docker-compose
+
+    ~~~bash
+    brew install docker-compose
+    ~~~
+
+-   前面的问题解决了，下一个问题是，springboot容器连接mysql总是失败，通过查看docker状态发现它一直处于restarting状态，根本没能运行起来
+
+    ~~~bash
+    gehao@sakura:~$ sudo docker container ls
+    CONTAINER ID   IMAGE          COMMAND                  CREATED         STATUS                          PORTS     NAMES
+    a3b7e31e8d05   mysql:8.0.24   "docker-entrypoint.s…"   9 minutes ago   Restarting (1) 17 seconds ago             iot_mysql
+    ~~~
+
+    再去查看一下log：发现是我在properties和Dockerfile里配置的mysql用户名出错了，不能配置为root
+
+    ~~~bash
+    gehao@sakura:~$ sudo docker logs a3b7e31e8
+    2021-06-23 08:40:12+00:00 [Note] [Entrypoint]: Entrypoint script for MySQL Server 8.0.24-1debian10 started.
+    2021-06-23 08:40:12+00:00 [Note] [Entrypoint]: Switching to dedicated user 'mysql'
+    2021-06-23 08:40:12+00:00 [Note] [Entrypoint]: Entrypoint script for MySQL Server 8.0.24-1debian10 started.
+    2021-06-23 08:40:12+00:00 [ERROR] [Entrypoint]: MYSQL_USER="root", MYSQL_USER and MYSQL_PASSWORD are for configuring a regular user and cannot be used for the root user
+        Remove MYSQL_USER="root" and use one of the following to control the root user password:
+        - MYSQL_ROOT_PASSWORD
+        - MYSQL_ALLOW_EMPTY_PASSWORD
+        - MYSQL_RANDOM_ROOT_PASSWORD
+    ~~~
+
+-   properties里八端口号改成compose.yml里的label，mysql和redis，有个问题，init里的init.sql没有被执行(volumn映射失败)，先试试手动建库建表
+
+-   zure的emqx开放端口+compose.yml建立映射
+
+-   一直连不上emqx的原因：可能emqx的listeners还没启动，springboot的docker就启动开始监听了，导致没法连接上emqx：这是docker自身的问题，它只会监听docker容器的启动，却不会监听容器内部服务的启动，https://blog.csdn.net/hu_zhenghui/article/details/79819209，解决方案wait-for-it：https://github.com/vishnubob/wait-for-it/issues/57
+
+    在iotserver的Dockerfile修改ENTRYPOINT：
+
+    ~~~dockerfile
+    ENTRYPOINT ["/wait-for-it.sh", "emqx:1883", "--timeout=60", "--", "java", "-jar", "/iotserver.jar"]
+    ~~~
+
+    iotserver镜像运行的结果：等待34s后emqx启动，springboot才开始运行
+
+    ~~~bash
+    wait-for-it.sh: waiting 60 seconds for emqx:1883
+    wait-for-it.sh: emqx:1883 is available after 34 seconds
+      .   ____          _            __ _ _
+     /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+    ( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+     \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+      '  |____| .__|_| |_|_| |_\__, | / / / /
+     =========|_|==============|___/=/_/_/_/
+     :: Spring Boot ::        (v2.1.1.RELEASE)
+    ~~~
+
+-   根据上述手段，对msyql和redis也进行监听，由于ENTRYPOINT只能放一条命令，因此我们需要把wait-for-it的这段逻辑单独写到一个server-run.sh里
+
+    ~~~bash
+    #!/usr/bin/env bash
+    # 运行iot server的脚本，需要等待mysql, redis, emqx的服务起来之后再启动jar包
+    /wait-for-it.sh mysql:3306 &&
+    /wait-for-it.sh redis:6379 &&
+    /wait-for-it.sh emqx:1883 --timeout=60 &&
+    java -jar /iotserver.jar
+    ~~~
+
+    然后修改Dockerfile即可
+
+    ~~~bash
+    FROM java:8
+    MAINTAINER gehao<sakura.gehao@gmail.com>
+    EXPOSE 8443
+    COPY ./target/iotserver-0.0.1-SNAPSHOT.jar /iotserver.jar
+    COPY ./wait-for-it.sh /wait-for-it.sh
+    COPY ./server-run.sh /server-run.sh
+    RUN chmod +x /server-run.sh # 加权限
+    ENTRYPOINT ["./server-run.sh"]
+    ~~~
+
+    运行结果：
+
+    ~~~bash
+    wait-for-it.sh: waiting 15 seconds for mysql:3306
+    wait-for-it.sh: mysql:3306 is available after 1 seconds
+    wait-for-it.sh: waiting 15 seconds for redis:6379
+    wait-for-it.sh: redis:6379 is available after 0 seconds
+    wait-for-it.sh: waiting 60 seconds for emqx:1883
+    wait-for-it.sh: emqx:1883 is available after 28 seconds
+    
+      .   ____          _            __ _ _
+     /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+    ( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+     \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+      '  |____| .__|_| |_|_| |_\__, | / / / /
+     =========|_|==============|___/=/_/_/_/
+     :: Spring Boot ::        (v2.1.1.RELEASE)
+    ~~~
+
+-   还剩两个问题：Docker compose挂载只有目录没有文件，导致数据库没有初始化；iotclient运行失败（修改pom.xml即可）
+
+-   mysql8->5，到官网找5.7.30的dmg包傻瓜式安装，然后修改root密码为gehao，重新执行init.sql即可，springboot的配置参考http://cxyzjd.com/article/Aliux_JLQ/112346051
+
+一个很严重的问题：使用idea docker插件，如果本地对springboot的properties有修改但远程已经有了镜像，必须要将远程docker镜像删除之后配置才会生效
