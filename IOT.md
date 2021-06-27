@@ -360,7 +360,7 @@ https://blog.csdn.net/Mrkaizi/article/details/112233166
 
 黑马：https://juejin.cn/post/6960125126008389669#heading-38、https://www.bilibili.com/video/BV1VZ4y1M7ZC?p=2
 
-vue修改proxyTable解决**跨域**请求：[1](https://www.geek-share.com/detail/2789999270.html)
+vue修改proxyTable解决**跨域**请求：[1](https://www.geek-share.com/detail/2789999270.html)、[跨域问题的理解webpack](https://forum.vuejs.org/t/vue-cli-build/40315/6)
 
 到config/index.js文件中，找到proxyTable，加上：
 
