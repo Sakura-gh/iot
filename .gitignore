@@ -4,3 +4,4 @@ iot-vue/node_modules/*
 *.class
 *.swp
 docker/mysql/data/*
+docker/redis/data/*
