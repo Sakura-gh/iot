@@ -21,7 +21,7 @@ export default {
   },
   mounted() {
     this.initChart();
-    // this.getData()
+    this.getData();
     this.getDataInternal();
     window.addEventListener("resize", this.screenAdapter);
     this.screenAdapter();
@@ -69,10 +69,10 @@ export default {
     getDataInternal() {
       // 先清除之前的定时器
       clearInterval(this.timerId);
-      // 每1秒刷新一次地图数据
+      // 每5秒刷新一次地图数据
       this.timerId = setInterval(() => {
         this.getData();
-      }, 1000);
+      }, 5000);
     },
     async getData() {
       // 获取device ids

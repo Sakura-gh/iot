@@ -173,7 +173,15 @@ export default {
       this.originData[i] = this.tableData[i];
       this.flushPageData();
     },
-    handleAdd() {},
+    handleAdd() {
+      this.tableData.push({
+        clientId: "",
+        name: "",
+        canEdit: "",
+      });
+      this.originData = this.tableData;
+      this.flushPageData();
+    },
     handleDelete(index, row) {
       this.tableData.splice(index, 1);
       this.originData = this.tableData;
