@@ -72,7 +72,7 @@ export default {
       // 每5秒刷新一次地图数据
       this.timerId = setInterval(() => {
         this.getData();
-      }, 5000);
+      }, 1000);
     },
     async getData() {
       // 获取device ids
